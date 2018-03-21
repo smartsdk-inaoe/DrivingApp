@@ -1,10 +1,14 @@
 package mx.edu.cenidet.drivingapp.activities;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -46,10 +50,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String email;
     private String token;
     private Intent mIntent;
+    private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        context = this;
         appPreferences = new ApplicationPreferences();
         if(setCredentialsIfExist()){
             mIntent = new Intent(this, SplashActivity.class);
@@ -99,6 +105,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
         }
+
+
     }
 
     private void bindUI(){
@@ -282,6 +290,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // All Permissions Granted
                 } else {
                     // Permission Denied
+                    this.finish();
                     Toast.makeText(LoginActivity.this, R.string.message_permission_denied, Toast.LENGTH_SHORT).show();
                 }
                 /*if (perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
