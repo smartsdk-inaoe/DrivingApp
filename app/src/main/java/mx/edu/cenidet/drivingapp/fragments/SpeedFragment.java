@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
@@ -30,6 +31,7 @@ public class SpeedFragment extends Fragment implements SendDataService.SendDataM
     private TextView tvSpeed;
     private TextView tvAcceleration;
     private TextView tvLocation;
+    private ProgressBar pbSpeed;
     //private TextView tvSpeed;
     private static final String STATUS = "Status";
 

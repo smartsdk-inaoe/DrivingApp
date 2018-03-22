@@ -10,12 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/-->
     <ProgressBar
+        android:id="@+id/pbSpeed"
         android:layout_width="270dp"
         android:layout_height="270dp"
         android:layout_gravity="center"
         android:background="@drawable/circle_2"
         android:indeterminate="false"
-        android:max="5"
+        android:max="100"
         android:progress="100"
         android:progressDrawable="@drawable/circle_1"
         android:rotation="-90"

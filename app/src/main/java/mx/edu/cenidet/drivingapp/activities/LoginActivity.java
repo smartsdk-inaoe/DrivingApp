@@ -153,8 +153,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String password = etLoginPassword.getText().toString();
                 if(login(email, password)){
                     userController.logInUser(email, password);
-                    //goToHome();
-                    //saveOnPreferences(email, password);
                 }
                 break;
         }
@@ -203,17 +201,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void logInUser(Response response) {
+        Log.i("Status:", "code: "+response.getHttpCode()+" body: "+response.getBodyString());
         switch (response.getHttpCode()){
+            case 200:
             case 201:
                 //Toast.makeText(getApplicationContext(), "CODE:"+response.getHttpCode(), Toast.LENGTH_SHORT).show();
-                if((response.getBodyString().equals("") || response.getBodyString() == null) || (response.getxSubjectToken().equals("") || response.getxSubjectToken() == null)){
+                if((response.getBodyString().equals("") || response.getBodyString() == null)){
+                    Toast.makeText(getApplicationContext(), R.string.message_login_not_found, Toast.LENGTH_SHORT).show();
+                }else{
+                    JSONObject jsonObject = response.parseJsonObject(response.getBodyString());
+
+                    try {
+                        token = jsonObject.getString("token");
+                        email = etLoginEmail.getText().toString();
+                        Log.i("Status:", "token: "+token+" email: "+email);
+                        userController.readUser(email);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                /*if((response.getBodyString().equals("") || response.getBodyString() == null) || (response.getxSubjectToken().equals("") || response.getxSubjectToken() == null)){
                     Toast.makeText(getApplicationContext(), R.string.message_login_not_found, Toast.LENGTH_SHORT).show();
                 }else{
                     token = response.getxSubjectToken();
                     email = etLoginEmail.getText().toString();
                     userController.readUser(email);
-                }
+                }*/
                 break;
+            case 500:
             case 401:
                 Toast.makeText(getApplicationContext(), R.string.message_user_not_found, Toast.LENGTH_SHORT).show();
                 break;

@@ -58,8 +58,8 @@ public class UserController implements MethodGET.MethodGETCallback, MethodPOST.M
     public void logInUser(String email, String password){
         Response response = new Response();
         method = "logInUser";
-        String URL = URL_BASE_LOGIN + ConfigServer.http_tokens.getPropiedad();
-        String json= "{\n" +
+        String URL = URL_BASE_LOGIN + ConfigServer.http_login.getPropiedad();
+        /*String json= "{\n" +
                 "\t\"auth\": {\n" +
                 "\t\t\"identity\": {\n" +
                 "\t\t\t\"methods\": [\n" +
@@ -76,8 +76,13 @@ public class UserController implements MethodGET.MethodGETCallback, MethodPOST.M
                 "\t\t\t}\n" +
                 "\t\t}\n" +
                 "\t}\n" +
+                "}";*/
+        String json = "{\n" +
+                "\t\"email\":\""+email+"\",\n" +
+                "\t\"password\":\""+password+"\"\n" +
                 "}";
         JSONObject jsonLogInUser = response.parseJsonObject(json);
+        Log.i("Status", "JSON: "+jsonLogInUser);
         mPOST = new MethodPOST(this);
         mPOST.execute(URL, jsonLogInUser.toString());
     }
