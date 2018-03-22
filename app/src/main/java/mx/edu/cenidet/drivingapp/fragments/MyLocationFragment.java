@@ -166,4 +166,9 @@ public class MyLocationFragment extends Fragment implements OnMapReadyCallback, 
     public void detectCampus(Campus campus, boolean statusLocation) {
 
     }
+
+    @Override
+    public void sendDataAccelerometer(double ax, double ay, double az) {
+        Log.i("STATUS 4: ","ax: "+ax+" ay: "+ay+" az: "+az);
+    }
 }
