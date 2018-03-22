@@ -79,4 +79,9 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
         Log.i("STATUS: ","Address: "+campus.getAddress());
         Log.i("STATUS: ","Dentro/Fuera: "+statusLocation);*/
     }
+
+    @Override
+    public void sendDataAccelerometer(double ax, double ay, double az) {
+        Log.i("STATUS 1: ","ax: "+ax+" ay: "+ay+" az: "+az);
+    }
 }

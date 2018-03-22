@@ -45,6 +45,7 @@ public class Constants {
     public static final String SERVICE_RUNNING_DEVICEMODEL= "service_running_devicemodel";
     public static final String SERVICE_RESULT_DEVICEMODEL = "service_result_devicemodel";
     public static final String SERVICE_RUNNING_SENSORS = "service_running_sensors";
-    public static final String SERVICE_RESULT_SENSORS = "service_result_sensors";
+    public static final String ACCELEROMETER_RESULT_SENSORS = "accelerometer_result_sensors";
+    public static final String GYROSCOPE_RESULT_SENSORS = "gyroscope_result_sensors";
 
 }
