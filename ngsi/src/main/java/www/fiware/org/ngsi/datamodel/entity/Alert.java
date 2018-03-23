@@ -22,6 +22,15 @@ public class Alert {
     private DateTimeObject validTo;
 
     public Alert() {
+        alertSource = new TextObject();
+        category = new TextObject();
+        dateObserved = new DateTimeObject();
+        description = new TextObject();
+        location = new LocationPointObject();
+        severity = new TextObject();
+        subCategory = new TextObject();
+        validFrom = new DateTimeObject();
+        validTo = new DateTimeObject();
     }
 
     public String getId() {

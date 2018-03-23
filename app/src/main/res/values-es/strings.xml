@@ -36,6 +36,9 @@
     <string name="button_enable_alert_gps">Habilitar GPS</string>
     <string name="message_alert_see_map">Ver en el mapa</string>
     <string name="message_alert_delete">Eliminar</string>
+    <string name="message_is_driving_user_title">¿Se encuentra dentro de un automóvil?</string>
+    <string name="message_is_driving_user_yes">Si</string>
+    <string name="message_is_driving_user_no">No</string>
 
     <!--Message Permission -->
     <string name="message_title_showMessageOKCancel">Permisos requeridos</string>

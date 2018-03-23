@@ -34,6 +34,9 @@
     <string name="button_enable_alert_gps">Enable GPS</string>
     <string name="message_alert_see_map">See on the map</string>
     <string name="message_alert_delete">Delete</string>
+    <string name="message_is_driving_user_title">Are you inside a car?</string>
+    <string name="message_is_driving_user_yes">Yes</string>
+    <string name="message_is_driving_user_no">No</string>
 
     <!--Message Permission -->
     <string name="message_title_showMessageOKCancel">Required Permissions</string>

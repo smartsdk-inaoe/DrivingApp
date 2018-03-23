@@ -46,6 +46,7 @@ import mx.edu.cenidet.drivingapp.fragments.SpeedFragment;
 import mx.edu.cenidet.drivingapp.services.DeviceService;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 import www.fiware.org.ngsi.utilities.Constants;
+import www.fiware.org.ngsi.utilities.Tools;
 
 public class HomeActivity extends AppCompatActivity{
     private DrawerLayout drawerLayout;
@@ -60,6 +61,13 @@ public class HomeActivity extends AppCompatActivity{
         setContentView(R.layout.activity_home);
         MAIN_CONTEXT = HomeActivity.this;
         appPreferences = new ApplicationPreferences();
+        //Inicializa los datos de conexión
+        try {
+            Tools.initialize("config.properties", getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         //Mandar a llamar el toolbar una vez generado en el activity_main de la actividad
         setToolbar();
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -165,6 +173,7 @@ public class HomeActivity extends AppCompatActivity{
         tvUserName.setText(appPreferences.getPreferenceString(getApplicationContext(), ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_USER_NAME));
         navigationView.addHeaderView(view);
 
+        isDrivingUser();
         //Inicia el servicio para la captura de la posición.
         Intent deviceService = new Intent(MAIN_CONTEXT, DeviceService.class);
         startService(deviceService);
@@ -230,5 +239,28 @@ public class HomeActivity extends AppCompatActivity{
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void isDrivingUser(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage(R.string.message_is_driving_user_title)
+                .setIcon(R.drawable.ic_car)
+                .setNegativeButton(R.string.message_is_driving_user_no,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //acciones del boton Si
+                            }
+                        })
+                .setPositiveButton(R.string.message_is_driving_user_yes,
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                //acciones del boton Si
+                            }
+                        });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+
+                    //.setCancelable(false)
 
 }
