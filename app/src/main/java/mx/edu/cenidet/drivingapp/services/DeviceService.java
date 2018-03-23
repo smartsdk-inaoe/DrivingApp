@@ -71,6 +71,18 @@ public class DeviceService extends Service{
     private HashMap<String, Double> hashMapSpeedFromTo;
     private HashMap<String, Double> hashMapLatLngFromTo;
 
+    /** variables de control y configuración**/
+
+    private boolean isDrivingUser=true; // Variable para determinar si una persona va manejando
+    private boolean isMonitoring=false; // Variable para determinar si se deben monitorear los eventos relacionados con la velocidad
+    private boolean isInArea=true; //Variable para saber si una persona se encuentra dentro de un area
+    private boolean isInParking=true; //Variable para verificar si la persona se encuentra en un area que tiene calles
+
+    private double minimumSpeedToAsk=4.5; // Valor minimo de velocidad al que se preguntara si una persona va manejando.
+    private double minimumSpeedForAutomaticCalculation=7.5; // Valor minimo de la velocidad al que se asumira que la persona va manejando
+    private double timeStampLastReadingGPS=0.0; //Marca de tiempo que permite identificar el tiempo de la ultima lectura realizada, el valor esta en milisegundos.
+
+
     //Medir distancias
     float[] distanceArray;
     public void onCreate() {
@@ -111,7 +123,8 @@ public class DeviceService extends Service{
         @Override
         public void onLocationChanged(Location location) {
             if (location != null) {
-                latitudeGPS = (double) location.getLatitude();
+                eventDetecion(location);
+                /*latitudeGPS = (double) location.getLatitude();
                 longitudeGPS = (double) location.getLongitude();
                 speedMS = (double) location.getSpeed();
                 speedKmHr = (double) (location.getSpeed() * 3.6);
@@ -199,7 +212,7 @@ public class DeviceService extends Service{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }*/
-                //Log.i(STATUS, "GPS latitude: "+latitudeGPS+" longitude: "+longitudeGPS);
+                //Log.i(STATUS, "GPS latitude: "+latitudeGPS+" longitude: "+longitudeGPS); */
             }else {
                 Log.i(STATUS, "Error GPS...!");
                 //Toast.makeText(getBaseContext(), "Error GPS...!", Toast.LENGTH_LONG).show();
@@ -220,6 +233,8 @@ public class DeviceService extends Service{
         public void onProviderDisabled(String provider) {
 
         }
+
+
     };
 
 
@@ -387,6 +402,132 @@ public class DeviceService extends Service{
         if (locationListenerNetwork != null){
             locationManager.removeUpdates(locationListenerNetwork);
         }
+    }
+
+    private void eventDetecion(Location location){
+
+        if(isInArea){
+            if(isInParking){
+                speedKmHr = (double) (location.getSpeed() * 3.6);
+                if(isDrivingUser){
+                    isMonitoring=true;
+                } else if(speedKmHr>minimumSpeedToAsk && speedKmHr< minimumSpeedForAutomaticCalculation){
+                    // Activar funcion de preguntar
+                    isMonitoring=true;
+                }else if(speedKmHr>= minimumSpeedForAutomaticCalculation){
+                    isMonitoring=true;
+                }else{
+                    isMonitoring=false;
+                }
+            }else{
+                //LOGICA PARA CUANDO LA PERSONA SE ENCUENTRA EN EL AREA PERO NO ESTA EN UNA ZONA QUE TENGA CALLES
+                isMonitoring=false;
+            }
+        }
+        else{
+            // LOGICA PARA CUANDO EL TELEFONO NO SE ENCUENTRA EN EL AREA
+            isMonitoring=false;
+        }
+
+
+
+        if(isMonitoring) {
+            if (location != null) {
+                latitudeGPS = (double) location.getLatitude();
+                longitudeGPS = (double) location.getLongitude();
+                speedMS = (double) location.getSpeed();
+
+                Intent intent = new Intent(Constants.SERVICE_CHANGE_LOCATION_DEVICE).putExtra(Constants.SERVICE_RESULT_LATITUDE, latitudeGPS)
+                        .putExtra(Constants.SERVICE_RESULT_LONGITUDE, longitudeGPS).putExtra(Constants.SERVICE_RESULT_SPEED_MS, speedMS).putExtra(Constants.SERVICE_RESULT_SPEED_KMHR, speedKmHr);
+                LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(intent);
+
+                // DETECTAR EVENTOS LOCATION-----
+
+                //Detectar excesos de velocidad
+                if (speedKmHr > speedMax) {
+                    String message = "Excedio la velodidad maxima...";
+                } else if (speedKmHr < speedMin) {
+                    String message = "Su velocidad esta por debajo de los limites establecidos...";
+                } else {
+                    String message = "Conduce dentro de los parametros establecidos...";
+                }
+                Log.i(STATUS, "SPEED: " + speedKmHr);
+                //Logica para obtener la velocidad anterior y actual
+                if (hashMapSpeedFromTo.isEmpty() || hashMapSpeedFromTo.size() == 0) {
+                    speedFrom = speedKmHr;
+                    speedTo = speedKmHr;
+                    hashMapSpeedFromTo.put("speedFrom", speedFrom);
+                    hashMapSpeedFromTo.put("speedTo", speedTo);
+                    Log.i("STATUS", "SPEED INICIO VACIO: speedFrom: " + hashMapSpeedFromTo.get("speedFrom") + " speedTo: " + hashMapSpeedFromTo.get("speedTo"));
+                } else {
+                    speedFrom = hashMapSpeedFromTo.get("speedTo");
+                    speedTo = speedKmHr;
+                    hashMapSpeedFromTo.put("speedFrom", speedFrom);
+                    hashMapSpeedFromTo.put("speedTo", speedTo);
+                    Log.i("STATUS", "SPEED NO VACIO: speedFrom: " + hashMapSpeedFromTo.get("speedFrom") + " speedTo: " + hashMapSpeedFromTo.get("speedTo"));
+                }
+
+                Log.i(STATUS, "GPS LATITUDE: " + latitudeGPS + " longitude: " + longitudeGPS);
+                //Logica para obtener location apartir de (location anterior) y location hasta (location actual)
+                if (hashMapLatLngFromTo.isEmpty() || hashMapLatLngFromTo.size() == 0) {
+                    latitudeFrom = latitudeGPS;
+                    longitudeFrom = longitudeGPS;
+                    latitudeTo = latitudeGPS;
+                    longitudeTo = longitudeGPS;
+                    hashMapLatLngFromTo.put("latitudeFrom", latitudeFrom);
+                    hashMapLatLngFromTo.put("longitudeFrom", longitudeFrom);
+                    hashMapLatLngFromTo.put("latitudeTo", latitudeTo);
+                    hashMapLatLngFromTo.put("longitudeTo", longitudeTo);
+                    Log.i("STATUS", "hashMapLatLngFromTo INICIO VACIO:\nlatitudeFrom: " + hashMapLatLngFromTo.get("latitudeFrom") + " longitudeFrom: " + hashMapLatLngFromTo.get("longitudeFrom") + " latitudeTo: " + hashMapLatLngFromTo.get("latitudeTo") + " longitudeTo: " + hashMapLatLngFromTo.get("longitudeTo"));
+                } else {
+                    latitudeFrom = hashMapLatLngFromTo.get("latitudeTo");
+                    longitudeFrom = hashMapLatLngFromTo.get("longitudeTo");
+                    latitudeTo = latitudeGPS;
+                    longitudeTo = longitudeGPS;
+                    hashMapLatLngFromTo.put("latitudeFrom", latitudeFrom);
+                    hashMapLatLngFromTo.put("longitudeFrom", longitudeFrom);
+                    hashMapLatLngFromTo.put("latitudeTo", latitudeTo);
+                    hashMapLatLngFromTo.put("longitudeTo", longitudeTo);
+
+                    Log.i("STATUS", "hashMapLatLngFromTo NO VACIO:\nlatitudeFrom: " + hashMapLatLngFromTo.get("latitudeFrom") + " longitudeFrom: " + hashMapLatLngFromTo.get("longitudeFrom") + " latitudeTo: " + hashMapLatLngFromTo.get("latitudeTo") + " longitudeTo: " + hashMapLatLngFromTo.get("longitudeTo"));
+                }
+
+                //PARADA REPENTINAS-----
+                if (!hashMapSpeedFromTo.isEmpty()) {
+                    if (hashMapSpeedFromTo.get("speedFrom") != 0 && hashMapSpeedFromTo.get("speedTo") == 0) {
+                        //Calculo de la distancia
+                        // double distance = 0;
+                    } else {
+
+                    }
+                }
+                latLngFrom = new LatLng(hashMapLatLngFromTo.get("latitudeFrom"), hashMapLatLngFromTo.get("longitudeFrom"));
+                latLngTo = new LatLng(hashMapLatLngFromTo.get("latitudeTo"), hashMapLatLngFromTo.get("longitudeTo"));
+                //latLngTo = new LatLng(18.876807, -99.219968);
+                distance = SphericalUtil.computeDistanceBetween(latLngFrom, latLngTo);
+                Log.i(STATUS, "DISTANCE 1: " + distance + "m");
+
+                location.distanceBetween(latitudeLast, longitudeLast, latitudeGPS, longitudeGPS, distanceArray);
+                Log.i(STATUS, "DISTANCE 2: " + distanceArray[0] + "km");
+                //location.distanceBetween();
+                // FIN DETECTAR EVENTOS LOCATION-----
+
+
+
+                /*UserLocation userLocation = updateUserLocation(HomeActivity.ID, latitudeGPS, longitudeGPS);
+                try {
+                    uLocationService.updateUserLocation(userLocation);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/
+                //Log.i(STATUS, "GPS latitude: "+latitudeGPS+" longitude: "+longitudeGPS);
+            } else {
+                Log.i(STATUS, "Error GPS...!");
+                //Toast.makeText(getBaseContext(), "Error GPS...!", Toast.LENGTH_LONG).show();
+            }
+        }
+
+
     }
 
 }
