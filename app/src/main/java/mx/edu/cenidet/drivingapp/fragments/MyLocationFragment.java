@@ -158,7 +158,7 @@ public class MyLocationFragment extends Fragment implements OnMapReadyCallback, 
     public void sendLocationSpeed(double latitude, double longitude, double speedMS, double speedKmHr) {
         createOrUpdateMarkerByLocation(latitude, longitude);
         //listPolyline.add(new LatLng(latitude,longitude));
-        Log.i("STATUS: ","MyLocationFragment-sendLocationSpeed");
+        //Log.i("STATUS: ","MyLocationFragment-sendLocationSpeed");
         //Log.i("SPEED: ", "VIEW Latitude: " + latitude + " Longitude: " + longitude + " Velocidad: " + speedMS + "m/s  Velocidad: " + speedKmHr + "km/hr");
     }
 
@@ -169,6 +169,6 @@ public class MyLocationFragment extends Fragment implements OnMapReadyCallback, 
 
     @Override
     public void sendDataAccelerometer(double ax, double ay, double az) {
-        Log.i("STATUS 4: ","ax: "+ax+" ay: "+ay+" az: "+az);
+        //Log.i("STATUS 4: ","ax: "+ax+" ay: "+ay+" az: "+az);
     }
 }

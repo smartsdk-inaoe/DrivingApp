@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
 
     @Override
     public void sendLocationSpeed(double latitude, double longitude, double speedMS, double speedKmHr) {
-        Log.i("STATUS: ","HomeFragment-sendLocationSpeed");
+        //Log.i("STATUS: ","HomeFragment-sendLocationSpeed");
     }
 
     @Override
@@ -82,6 +82,6 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
 
     @Override
     public void sendDataAccelerometer(double ax, double ay, double az) {
-        Log.i("STATUS 1: ","ax: "+ax+" ay: "+ay+" az: "+az);
+        //Log.i("STATUS 1: ","ax: "+ax+" ay: "+ay+" az: "+az);
     }
 }

@@ -77,7 +77,7 @@ public class SpeedFragment extends Fragment implements SendDataService.SendDataM
     @Override
     public void sendDataAccelerometer(double ax, double ay, double az) {
         tvAcceleration.setText("ax: "+ax+"\nay: "+ay+"\naz: "+az);
-        Log.i("STATUS 2: ","ax: "+ax+" ay: "+ay+" az: "+az);
+        //Log.i("STATUS 2: ","ax: "+ax+" ay: "+ay+" az: "+az);
     }
 
 }

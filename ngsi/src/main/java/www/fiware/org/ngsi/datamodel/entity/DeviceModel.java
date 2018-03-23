@@ -2,6 +2,7 @@ package www.fiware.org.ngsi.datamodel.entity;
 
 import java.io.Serializable;
 
+import www.fiware.org.ngsi.datamodel.datatypes.DateTimeObject;
 import www.fiware.org.ngsi.datamodel.datatypes.TextObject;
 
 /**
@@ -16,7 +17,7 @@ public class DeviceModel  implements Serializable{
     private TextObject brandName;
     private TextObject modelName;
     private TextObject manufacturerName;
-    private TextObject dateCreated;
+    private DateTimeObject dateCreated;
 
 
 
@@ -25,10 +26,10 @@ public class DeviceModel  implements Serializable{
         brandName = new TextObject();
         modelName = new TextObject();
         manufacturerName = new TextObject();
-        dateCreated = new TextObject();
+        dateCreated = new DateTimeObject();
     }
 
-    public DeviceModel(String id, String type, TextObject category, TextObject brandName, TextObject modelName, TextObject manufacturerName, TextObject dateCreated) {
+    public DeviceModel(String id, String type, TextObject category, TextObject brandName, TextObject modelName, TextObject manufacturerName, DateTimeObject dateCreated) {
         this.id = id;
         this.type = type;
         this.category = category;
@@ -86,11 +87,24 @@ public class DeviceModel  implements Serializable{
         this.manufacturerName = manufacturerName;
     }
 
-    public TextObject getDateCreated() {
+    public DateTimeObject getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(TextObject dateCreated) {
+    public void setDateCreated(DateTimeObject dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    @Override
+    public String toString() {
+        return "DeviceModel{" +
+                "id='" + id + '\'' +
+                ", type='" + type + '\'' +
+                ", category=" + category.getValue() +
+                ", brandName=" + brandName.getValue() +
+                ", modelName=" + modelName.getValue() +
+                ", manufacturerName=" + manufacturerName.getValue() +
+                ", dateCreated=" + dateCreated.getValue() +
+                '}';
     }
 }

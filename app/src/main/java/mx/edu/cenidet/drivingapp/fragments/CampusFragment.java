@@ -115,7 +115,7 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
     @Override
     public void detectCampus(Campus campus, boolean statusLocation) {
         if(statusLocation == true){
-            Log.i("STATUS: ","Count "+count++);
+            //Log.i("STATUS: ","Count "+count++);
             name = campus.getName();
             location = campus.getLocation();
             pointMap = campus.getPointMap();
@@ -153,6 +153,6 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
 
     @Override
     public void sendDataAccelerometer(double ax, double ay, double az) {
-        Log.i("STATUS 3: ","ax: "+ax+" ay: "+ay+" az: "+az);
+        //Log.i("STATUS 3: ","ax: "+ax+" ay: "+ay+" az: "+az);
     }
 }

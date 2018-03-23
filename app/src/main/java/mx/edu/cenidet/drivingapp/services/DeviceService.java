@@ -23,12 +23,16 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
+
 import org.json.JSONException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import www.fiware.org.ngsi.datamodel.entity.DeviceSensor;
@@ -40,7 +44,7 @@ import www.fiware.org.ngsi.utilities.Constants;
 
 public class DeviceService extends Service{
     private Context context;
-    private static final String STATUS = "Status";
+    private static final String STATUS = "STATUS";
     private double longitudeGPS, latitudeGPS;
     private double longitudeNetwork, latitudeNetwork;
     private double speedMS;
@@ -57,11 +61,24 @@ public class DeviceService extends Service{
     private ArrayList<Double> listValueSensor;
     private String deviceId, androidId;
     DeviceSensor deviceSensor;
+    private double speedMin = 0.0, speedMax = 3.0, speedLast = 0.0;
+    private  double latitudeLast, longitudeLast;
+    //variables que se utilizaran en el calculo paradas repentinas
+    private LatLng latLngFrom, latLngTo;
+    private double latitudeFrom, longitudeFrom, latitudeTo, longitudeTo;
+    private double distance;
+    private double speedFrom, speedTo;
+    private HashMap<String, Double> hashMapSpeedFromTo;
+    private HashMap<String, Double> hashMapLatLngFromTo;
 
-    @Override
+    //Medir distancias
+    float[] distanceArray;
     public void onCreate() {
         super.onCreate();
         context = HomeActivity.MAIN_CONTEXT;
+        hashMapSpeedFromTo = new HashMap<String, Double>();
+        hashMapLatLngFromTo = new HashMap<String, Double>();
+        distanceArray = new float[2];
         //uLocationService = new UsersLocationService(context,this);
         //id = HomeActivity.ID;
     }
@@ -78,7 +95,7 @@ public class DeviceService extends Service{
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListenerGPS);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, locationListenerGPS);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
 
         //Sensor acelerometro y giroscopio
@@ -98,9 +115,84 @@ public class DeviceService extends Service{
                 longitudeGPS = (double) location.getLongitude();
                 speedMS = (double) location.getSpeed();
                 speedKmHr = (double) (location.getSpeed() * 3.6);
+
                 Intent intent = new Intent(Constants.SERVICE_CHANGE_LOCATION_DEVICE).putExtra(Constants.SERVICE_RESULT_LATITUDE, latitudeGPS)
                         .putExtra(Constants.SERVICE_RESULT_LONGITUDE, longitudeGPS).putExtra(Constants.SERVICE_RESULT_SPEED_MS, speedMS).putExtra(Constants.SERVICE_RESULT_SPEED_KMHR, speedKmHr);
                 LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(intent);
+
+                // DETECTAR EVENTOS LOCATION-----
+
+                //Detectar excesos de velocidad
+                if(speedKmHr > speedMax){
+                    String message = "Excedio la velodidad maxima...";
+                }else if(speedKmHr < speedMin){
+                    String message = "Su velocidad esta por debajo de los limites establecidos...";
+                }else{
+                    String message = "Conduce dentro de los parametros establecidos...";
+                }
+                Log.i(STATUS, "SPEED: "+speedKmHr);
+                //Logica para obtener la velocidad anterior y actual
+                if(hashMapSpeedFromTo.isEmpty() || hashMapSpeedFromTo.size() == 0){
+                    speedFrom = speedKmHr;
+                    speedTo = speedKmHr;
+                    hashMapSpeedFromTo.put("speedFrom", speedFrom);
+                    hashMapSpeedFromTo.put("speedTo", speedTo);
+                    Log.i("STATUS", "SPEED INICIO VACIO: speedFrom: "+hashMapSpeedFromTo.get("speedFrom")+" speedTo: "+hashMapSpeedFromTo.get("speedTo"));
+                }else{
+                    speedFrom = hashMapSpeedFromTo.get("speedTo");
+                    speedTo = speedKmHr;
+                    hashMapSpeedFromTo.put("speedFrom", speedFrom);
+                    hashMapSpeedFromTo.put("speedTo", speedTo);
+                    Log.i("STATUS", "SPEED NO VACIO: speedFrom: "+hashMapSpeedFromTo.get("speedFrom")+" speedTo: "+hashMapSpeedFromTo.get("speedTo"));
+                }
+
+                Log.i(STATUS, "GPS LATITUDE: "+latitudeGPS+" longitude: "+longitudeGPS);
+                //Logica para obtener location apartir de (location anterior) y location hasta (location actual)
+                if(hashMapLatLngFromTo.isEmpty() || hashMapLatLngFromTo.size() == 0){
+                    latitudeFrom = latitudeGPS;
+                    longitudeFrom = longitudeGPS;
+                    latitudeTo = latitudeGPS;
+                    longitudeTo = longitudeGPS;
+                    hashMapLatLngFromTo.put("latitudeFrom", latitudeFrom);
+                    hashMapLatLngFromTo.put("longitudeFrom", longitudeFrom);
+                    hashMapLatLngFromTo.put("latitudeTo", latitudeTo);
+                    hashMapLatLngFromTo.put("longitudeTo", longitudeTo);
+                    Log.i("STATUS", "hashMapLatLngFromTo INICIO VACIO:\nlatitudeFrom: "+hashMapLatLngFromTo.get("latitudeFrom")+" longitudeFrom: "+hashMapLatLngFromTo.get("longitudeFrom")+" latitudeTo: "+hashMapLatLngFromTo.get("latitudeTo")+" longitudeTo: "+hashMapLatLngFromTo.get("longitudeTo"));
+                }else{
+                    latitudeFrom = hashMapLatLngFromTo.get("latitudeTo");
+                    longitudeFrom = hashMapLatLngFromTo.get("longitudeTo");
+                    latitudeTo = latitudeGPS;
+                    longitudeTo = longitudeGPS;
+                    hashMapLatLngFromTo.put("latitudeFrom", latitudeFrom);
+                    hashMapLatLngFromTo.put("longitudeFrom", longitudeFrom);
+                    hashMapLatLngFromTo.put("latitudeTo", latitudeTo);
+                    hashMapLatLngFromTo.put("longitudeTo", longitudeTo);
+
+                    Log.i("STATUS", "hashMapLatLngFromTo NO VACIO:\nlatitudeFrom: "+hashMapLatLngFromTo.get("latitudeFrom")+" longitudeFrom: "+hashMapLatLngFromTo.get("longitudeFrom")+" latitudeTo: "+hashMapLatLngFromTo.get("latitudeTo")+" longitudeTo: "+hashMapLatLngFromTo.get("longitudeTo"));
+                }
+
+                //PARADA REPENTINAS-----
+                if(!hashMapSpeedFromTo.isEmpty()){
+                    if(hashMapSpeedFromTo.get("speedFrom") != 0 && hashMapSpeedFromTo.get("speedTo") == 0){
+                        //Calculo de la distancia
+                        // double distance = 0;
+                    }else{
+
+                    }
+                }
+                latLngFrom = new LatLng(hashMapLatLngFromTo.get("latitudeFrom"), hashMapLatLngFromTo.get("longitudeFrom"));
+                latLngTo = new LatLng(hashMapLatLngFromTo.get("latitudeTo"), hashMapLatLngFromTo.get("longitudeTo"));
+                //latLngTo = new LatLng(18.876807, -99.219968);
+                distance = SphericalUtil.computeDistanceBetween(latLngFrom, latLngTo);
+                Log.i(STATUS, "DISTANCE 1: "+distance+"m");
+
+                location.distanceBetween(latitudeLast, longitudeLast, latitudeGPS, longitudeGPS, distanceArray);
+                Log.i(STATUS, "DISTANCE 2: "+distanceArray[0]+"km");
+                 //location.distanceBetween();
+                // FIN DETECTAR EVENTOS LOCATION-----
+
+
+
                 /*UserLocation userLocation = updateUserLocation(HomeActivity.ID, latitudeGPS, longitudeGPS);
                 try {
                     uLocationService.updateUserLocation(userLocation);
@@ -129,6 +221,7 @@ public class DeviceService extends Service{
 
         }
     };
+
 
     private final LocationListener locationListenerNetwork = new LocationListener() {
 
