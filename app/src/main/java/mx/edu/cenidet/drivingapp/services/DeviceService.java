@@ -77,11 +77,14 @@ public class DeviceService extends Service{
     private boolean isMonitoring=false; // Variable para determinar si se deben monitorear los eventos relacionados con la velocidad
     private boolean isInArea=true; //Variable para saber si una persona se encuentra dentro de un area
     private boolean isInParking=true; //Variable para verificar si la persona se encuentra en un area que tiene calles
+    private boolean isUnauthorizedSpeed=false;
 
     private double minimumSpeedToAsk=4.5; // Valor minimo de velocidad al que se preguntara si una persona va manejando.
     private double minimumSpeedForAutomaticCalculation=7.5; // Valor minimo de la velocidad al que se asumira que la persona va manejando
     private double timeStampLastReadingGPS=0.0; //Marca de tiempo que permite identificar el tiempo de la ultima lectura realizada, el valor esta en milisegundos.
-
+    private double timeUpdateAlert=5; // Tiempo en segundos para actualizar una alerta
+    private double timeMinInferiorSpeed=180; //Tiempo minimo en segundos para determinarlo como una velocidad por debajo del limite minimo establecido
+    private double timeStampLastMinSpeedReading=-1.0; //Marca de tiempo que permite identificar el tiempo de la ultima lectura realizada, el valor esta en milisegundos.
 
     //Medir distancias
     float[] distanceArray;
@@ -405,67 +408,43 @@ public class DeviceService extends Service{
     }
 
     private void eventDetecion(Location location){
-
-        if(isInArea){
-            if(isInParking){
-                speedKmHr = (double) (location.getSpeed() * 3.6);
-                if(isDrivingUser){
-                    isMonitoring=true;
-                } else if(speedKmHr>minimumSpeedToAsk && speedKmHr< minimumSpeedForAutomaticCalculation){
-                    // Activar funcion de preguntar
-                    isMonitoring=true;
-                }else if(speedKmHr>= minimumSpeedForAutomaticCalculation){
-                    isMonitoring=true;
+        if (location != null) {
+            if(isInArea){
+                if(isInParking){
+                    speedKmHr = (double) (location.getSpeed() * 3.6);
+                    if(isDrivingUser){
+                        isMonitoring=true;
+                    } else if(speedKmHr>minimumSpeedToAsk && speedKmHr< minimumSpeedForAutomaticCalculation){
+                        // Activar funcion de preguntar
+                        isMonitoring=true;
+                    }else if(speedKmHr>= minimumSpeedForAutomaticCalculation){
+                        isMonitoring=true;
+                    }else{
+                        isMonitoring=false;
+                    }
                 }else{
+                    //LOGICA PARA CUANDO LA PERSONA SE ENCUENTRA EN EL AREA PERO NO ESTA EN UNA ZONA QUE TENGA CALLES
                     isMonitoring=false;
                 }
-            }else{
-                //LOGICA PARA CUANDO LA PERSONA SE ENCUENTRA EN EL AREA PERO NO ESTA EN UNA ZONA QUE TENGA CALLES
+            }
+            else{
+                // LOGICA PARA CUANDO EL TELEFONO NO SE ENCUENTRA EN EL AREA
                 isMonitoring=false;
             }
-        }
-        else{
-            // LOGICA PARA CUANDO EL TELEFONO NO SE ENCUENTRA EN EL AREA
-            isMonitoring=false;
-        }
 
 
 
-        if(isMonitoring) {
-            if (location != null) {
+            if(isMonitoring) {
+
                 latitudeGPS = (double) location.getLatitude();
                 longitudeGPS = (double) location.getLongitude();
                 speedMS = (double) location.getSpeed();
 
+
+
                 Intent intent = new Intent(Constants.SERVICE_CHANGE_LOCATION_DEVICE).putExtra(Constants.SERVICE_RESULT_LATITUDE, latitudeGPS)
                         .putExtra(Constants.SERVICE_RESULT_LONGITUDE, longitudeGPS).putExtra(Constants.SERVICE_RESULT_SPEED_MS, speedMS).putExtra(Constants.SERVICE_RESULT_SPEED_KMHR, speedKmHr);
                 LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(intent);
-
-                // DETECTAR EVENTOS LOCATION-----
-
-                //Detectar excesos de velocidad
-                if (speedKmHr > speedMax) {
-                    String message = "Excedio la velodidad maxima...";
-                } else if (speedKmHr < speedMin) {
-                    String message = "Su velocidad esta por debajo de los limites establecidos...";
-                } else {
-                    String message = "Conduce dentro de los parametros establecidos...";
-                }
-                Log.i(STATUS, "SPEED: " + speedKmHr);
-                //Logica para obtener la velocidad anterior y actual
-                if (hashMapSpeedFromTo.isEmpty() || hashMapSpeedFromTo.size() == 0) {
-                    speedFrom = speedKmHr;
-                    speedTo = speedKmHr;
-                    hashMapSpeedFromTo.put("speedFrom", speedFrom);
-                    hashMapSpeedFromTo.put("speedTo", speedTo);
-                    Log.i("STATUS", "SPEED INICIO VACIO: speedFrom: " + hashMapSpeedFromTo.get("speedFrom") + " speedTo: " + hashMapSpeedFromTo.get("speedTo"));
-                } else {
-                    speedFrom = hashMapSpeedFromTo.get("speedTo");
-                    speedTo = speedKmHr;
-                    hashMapSpeedFromTo.put("speedFrom", speedFrom);
-                    hashMapSpeedFromTo.put("speedTo", speedTo);
-                    Log.i("STATUS", "SPEED NO VACIO: speedFrom: " + hashMapSpeedFromTo.get("speedFrom") + " speedTo: " + hashMapSpeedFromTo.get("speedTo"));
-                }
 
                 Log.i(STATUS, "GPS LATITUDE: " + latitudeGPS + " longitude: " + longitudeGPS);
                 //Logica para obtener location apartir de (location anterior) y location hasta (location actual)
@@ -491,6 +470,83 @@ public class DeviceService extends Service{
 
                     Log.i("STATUS", "hashMapLatLngFromTo NO VACIO:\nlatitudeFrom: " + hashMapLatLngFromTo.get("latitudeFrom") + " longitudeFrom: " + hashMapLatLngFromTo.get("longitudeFrom") + " latitudeTo: " + hashMapLatLngFromTo.get("latitudeTo") + " longitudeTo: " + hashMapLatLngFromTo.get("longitudeTo"));
                 }
+
+                Log.i(STATUS, "SPEED: " + speedKmHr);
+                //Logica para obtener la velocidad anterior y actual
+                if (hashMapSpeedFromTo.isEmpty() || hashMapSpeedFromTo.size() == 0) {
+                    speedFrom = speedKmHr;
+                    speedTo = speedKmHr;
+                    hashMapSpeedFromTo.put("speedFrom", speedFrom);
+                    hashMapSpeedFromTo.put("speedTo", speedTo);
+                    Log.i("STATUS", "SPEED INICIO VACIO: speedFrom: " + hashMapSpeedFromTo.get("speedFrom") + " speedTo: " + hashMapSpeedFromTo.get("speedTo"));
+                } else {
+                    speedFrom = hashMapSpeedFromTo.get("speedTo");
+                    speedTo = speedKmHr;
+                    hashMapSpeedFromTo.put("speedFrom", speedFrom);
+                    hashMapSpeedFromTo.put("speedTo", speedTo);
+                    Log.i("STATUS", "SPEED NO VACIO: speedFrom: " + hashMapSpeedFromTo.get("speedFrom") + " speedTo: " + hashMapSpeedFromTo.get("speedTo"));
+                }
+
+                // DETECTAR EVENTOS LOCATION-----
+
+                //Variables para verificar el tiempo de las ultimas mediciones
+                double secondsPast=0.0;
+                double timeStampNewReadingGPS=location.getTime();
+                secondsPast=(timeStampNewReadingGPS-timeStampLastReadingGPS)/1000;
+                timeStampLastReadingGPS=location.getTime();
+
+                //Detectar excesos de velocidad
+                int controlSpeed=0;
+
+                if (speedKmHr > speedMax) {
+                    controlSpeed=1;
+                    timeStampLastMinSpeedReading=-1.0;
+                } else if (speedKmHr < speedMin) {
+                    if(timeStampLastMinSpeedReading>0){
+                       if(timeStampLastMinSpeedReading-location.getTime()>timeMinInferiorSpeed){
+                           controlSpeed=2;
+                       }
+                    }else {
+                        timeStampLastMinSpeedReading=location.getTime();
+                        controlSpeed = 0;
+                    }
+                } else {
+                    controlSpeed=0;
+                    timeStampLastMinSpeedReading=-1.0;
+                    if(isUnauthorizedSpeed){
+                        isUnauthorizedSpeed=false;
+                        sentAlert(3,"Alerta de velocidad no autorizada finalizada");
+                    }
+                }
+
+                if(!isUnauthorizedSpeed && controlSpeed>0){
+                    switch (controlSpeed){
+                        case 1:
+                            sentAlert(1,"Exceso de velocidad detectado");
+                            isUnauthorizedSpeed=true;
+                            break;
+                        case 2:
+                            sentAlert(1,"Velocidad por debajo del minimo establecido");
+                            isUnauthorizedSpeed=true;
+                            break;
+                    }
+                }else{
+                    if(secondsPast>timeUpdateAlert){
+                        switch (controlSpeed){
+                            case 1:
+                                sentAlert(2,"Exceso de velocidad detectado");
+                                isUnauthorizedSpeed=true;
+                                break;
+                            case 2:
+                                sentAlert(2,"Velocidad por debajo del minimo establecido");
+                                isUnauthorizedSpeed=true;
+                                break;
+                        }
+                    }
+                }
+
+
+
 
                 //PARADA REPENTINAS-----
                 if (!hashMapSpeedFromTo.isEmpty()) {
@@ -521,12 +577,22 @@ public class DeviceService extends Service{
                     e.printStackTrace();
                 }*/
                 //Log.i(STATUS, "GPS latitude: "+latitudeGPS+" longitude: "+longitudeGPS);
-            } else {
-                Log.i(STATUS, "Error GPS...!");
-                //Toast.makeText(getBaseContext(), "Error GPS...!", Toast.LENGTH_LONG).show();
+
             }
+        } else {
+            Log.i(STATUS, "Error GPS...!");
+            //Toast.makeText(getBaseContext(), "Error GPS...!", Toast.LENGTH_LONG).show();
         }
 
+    }
+
+
+    /**
+     *
+     * @param code codigo que informa si se debe generar una nueva alerta (1), actializar el estado de una alerta(2) o dar por finalizada la alerta (3). El codigo 3 solo se utiliza con alertas que perduran en el tiempo
+     * @param data Array que contiene los datos con los cuales se debe llenar la alerta. ¡¡¡¡¡ IMPORTANTE !!!!!  debe cambiarse a un objeto de tipo alerta
+     */
+    private void sentAlert(int code, String ... data){
 
     }
 
