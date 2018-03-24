@@ -77,12 +77,12 @@ public class HomeActivity extends AppCompatActivity{
 
         //TabLayout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_home));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_speed));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_campus_map));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_alerts));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_my_campus));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_my_location));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_home_menu));//setText(R.string.menu_home));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_speed_menu));//.setText(R.string.menu_speed));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_campus_menu));//setText(R.string.menu_campus_map));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_my_alerts));//.setText(R.string.menu_alerts));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_my_campus));//setText(R.string.menu_my_campus));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_my_location));//setText(R.string.menu_my_location));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
