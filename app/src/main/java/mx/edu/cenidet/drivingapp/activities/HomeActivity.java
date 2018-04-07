@@ -62,15 +62,12 @@ public class HomeActivity extends AppCompatActivity{
         setContentView(R.layout.activity_home);
         MAIN_CONTEXT = HomeActivity.this;
         appPreferences = new ApplicationPreferences();
-<<<<<<< HEAD
-=======
         //Inicializa los datos de conexión
         try {
             Tools.initialize("config.properties", getApplicationContext());
         } catch (Exception e) {
             e.printStackTrace();
         }
->>>>>>> ae20dd13f4b52c007416146cf23c2647f4eb3196
 
         //Mandar a llamar el toolbar una vez generado en el activity_main de la actividad
         setToolbar();

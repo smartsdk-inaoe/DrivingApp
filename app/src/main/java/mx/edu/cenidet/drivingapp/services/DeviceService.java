@@ -22,12 +22,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Surface;
 import android.view.WindowManager;
-<<<<<<< HEAD
-=======
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
->>>>>>> ae20dd13f4b52c007416146cf23c2647f4eb3196
 
 import org.json.JSONException;
 
@@ -35,10 +32,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-<<<<<<< HEAD
-=======
 import java.util.HashMap;
->>>>>>> ae20dd13f4b52c007416146cf23c2647f4eb3196
 
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import www.fiware.org.ngsi.datamodel.entity.DeviceSensor;
@@ -67,9 +61,6 @@ public class DeviceService extends Service{
     private ArrayList<Double> listValueSensor;
     private String deviceId, androidId;
     DeviceSensor deviceSensor;
-<<<<<<< HEAD
-    @Override
-=======
     private double speedMin = 0.0, speedMax = 3.0, speedLast = 0.0;
     private  double latitudeLast, longitudeLast;
     //variables que se utilizaran en el calculo paradas repentinas
@@ -97,7 +88,6 @@ public class DeviceService extends Service{
 
     //Medir distancias
     float[] distanceArray;
->>>>>>> ae20dd13f4b52c007416146cf23c2647f4eb3196
     public void onCreate() {
         super.onCreate();
         context = HomeActivity.MAIN_CONTEXT;
@@ -319,11 +309,10 @@ public class DeviceService extends Service{
                     listValueSensor.add(ax);
                     listValueSensor.add(ay);
                     listValueSensor.add(az);
-<<<<<<< HEAD
+
                     //DeviceSensor deviceSensor = new DeviceSensor();
-=======
+
                     DeviceSensor deviceSensor = new DeviceSensor();
->>>>>>> ae20dd13f4b52c007416146cf23c2647f4eb3196
                     deviceSensor.setId("Accelerometer_Smartphone_"+vendor+"_"+version+"_"+androidId);
                     deviceSensor.setType("Device");
                     deviceSensor.getCategory().setValue("sensor");
@@ -335,11 +324,8 @@ public class DeviceService extends Service{
 
                     //almacenar la información en la DB local del dispositivo movil
 
-<<<<<<< HEAD
-=======
                     //LOGICA PARA REALIZAR LOS CALCULOS CON EL ACELEROMETRO....
 
->>>>>>> ae20dd13f4b52c007416146cf23c2647f4eb3196
                     Intent localIntent = new Intent(Constants.SERVICE_RUNNING_SENSORS).putExtra(Constants.ACCELEROMETER_RESULT_SENSORS, deviceSensor);
                     LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(localIntent);
 
@@ -364,11 +350,8 @@ public class DeviceService extends Service{
                     listValueSensor.add(gx);
                     listValueSensor.add(gy);
                     listValueSensor.add(gz);
-<<<<<<< HEAD
-                    //DeviceSensor deviceSensor = new DeviceSensor();
-=======
+
                     DeviceSensor deviceSensor = new DeviceSensor();
->>>>>>> ae20dd13f4b52c007416146cf23c2647f4eb3196
                     deviceSensor.setId("Gyroscope_Smartphone_"+vendor+"_"+version+"_"+androidId);
                     deviceSensor.setType("Device");
                     deviceSensor.getCategory().setValue("sensor");
@@ -383,11 +366,7 @@ public class DeviceService extends Service{
                     Intent localIntent = new Intent(Constants.SERVICE_RUNNING_SENSORS).putExtra(Constants.GYROSCOPE_RESULT_SENSORS, deviceSensor);
                     LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(localIntent);
                     //Log.i("GYROSCOPE", "AX "+gx+" AY "+gy+" AZ "+gz);
-<<<<<<< HEAD
                      //Log.i("GYROSCOPE", "AX "+gx+" AY "+gy+" AZ "+gz +" -time: "+current_time+" -Id: "+id+ " -name: "+name+" -type: "+type+" -typeString: "+typeString+" -vendor: "+vendor+" -versión: "+version+" -power: "+power+" ORIENTATION: "+getRotation(context));
-=======
-                    //Log.i("GYROSCOPE", "AX "+gx+" AY "+gy+" AZ "+gz +" -time: "+current_time+" -Id: "+id+ " -name: "+name+" -type: "+type+" -typeString: "+typeString+" -vendor: "+vendor+" -versión: "+version+" -power: "+power+" ORIENTATION: "+getRotation(context));
->>>>>>> ae20dd13f4b52c007416146cf23c2647f4eb3196
                 }
             }
         }
