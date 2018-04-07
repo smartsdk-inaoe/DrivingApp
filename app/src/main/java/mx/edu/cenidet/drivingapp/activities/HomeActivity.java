@@ -82,7 +82,7 @@ public class HomeActivity extends AppCompatActivity{
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_campus_menu));//setText(R.string.menu_campus_map));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_my_alerts));//.setText(R.string.menu_alerts));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_my_campus));//setText(R.string.menu_my_campus));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_my_location));//setText(R.string.menu_my_location));
+        //tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_my_location));//setText(R.string.menu_my_location));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -103,8 +103,8 @@ public class HomeActivity extends AppCompatActivity{
                     changeDrawerMenu(position);
                 }else if(position == 3){
                     changeDrawerMenu(position);
-                }else if(position == 4){
-                    changeDrawerMenu(position);
+                /*}else if(position == 4){
+                    changeDrawerMenu(position);*/
                 }else{
                     changeDrawerMenu(position);
                 }
@@ -152,11 +152,11 @@ public class HomeActivity extends AppCompatActivity{
                         viewPager.setCurrentItem(4);
                         fratmentTransaction = true;
                         break;
-                    case R.id.menu_my_location:
+                    /*case R.id.menu_my_location:
                         //fragment = new MyLocationFragment();
                         viewPager.setCurrentItem(5);
                         fratmentTransaction = true;
-                        break;
+                        break;*/
                 }
 
                 if(fratmentTransaction){

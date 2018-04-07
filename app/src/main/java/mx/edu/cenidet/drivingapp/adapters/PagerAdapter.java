@@ -35,8 +35,8 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
                 return new AlertsFragment();
             case 4:
                 return new MyCampusFragment();
-            case 5:
-                return new MyLocationFragment();
+            /*case 5:
+                return new MyLocationFragment();*/
             default:
                 return null;
         }

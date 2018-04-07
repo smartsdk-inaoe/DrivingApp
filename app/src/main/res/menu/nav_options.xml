@@ -16,9 +16,9 @@
         <item android:id="@+id/menu_my_campus"
             android:icon="@drawable/ic_my_campus"
             android:title="@string/menu_my_campus"/>
-        <item android:id="@+id/menu_my_location"
+        <!--item android:id="@+id/menu_my_location"
             android:icon="@drawable/ic_my_location"
-            android:title="@string/menu_my_location"/>
+            android:title="@string/menu_my_location"/-->
     </group>
 
     <group android:id="@+id/menu_bottom" android:checkableBehavior="none">

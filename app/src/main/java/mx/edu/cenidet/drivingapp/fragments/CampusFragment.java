@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
@@ -46,14 +47,20 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
     private CameraPosition camera;
     private Context context;
     private String name, location,  pointMap;
-    private ArrayList<LatLng> listLocation;
     private JSONArray arrayLocation, arrayPoint;
     private double pointLatitude, pointLongitude;
     private SendDataService sendDataService;
     private int count = 1;
+
+    //Pintar todos los Campus
+    private ArrayList<Campus> listCampus;
+    private SQLiteDrivingApp sqLiteDrivingApp;
+    private ArrayList<LatLng> listLocation;
+
     public CampusFragment() {
         context = HomeActivity.MAIN_CONTEXT;
         sendDataService = new SendDataService(context, this);
+        sqLiteDrivingApp = new SQLiteDrivingApp(context);
     }
 
 
@@ -86,6 +93,37 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
         //Ocultar el boton
         gMap.getUiSettings().setMyLocationButtonEnabled(false);
         //createOrUpdateMarkerByLocation(pointLatitude, pointLongitude);
+        //Pintar todos los campus
+        listCampus = sqLiteDrivingApp.getAllCampus();
+        if(listCampus.size() == 0){
+
+        }else{
+            JSONArray arrayLocation;
+            String originalString, clearString;
+            double latitude, longitude;
+            String[] subString;
+            for(int i=0; i<listCampus.size(); i++){
+                listLocation = new ArrayList<>();
+                try {
+                    arrayLocation = new JSONArray(listCampus.get(i).getLocation());
+                    for (int j=0; j<arrayLocation.length(); j++){
+                        originalString = arrayLocation.get(j).toString();
+                        clearString = originalString.substring(originalString.indexOf("[") + 1, originalString.indexOf("]"));
+                        subString =  clearString.split(",");
+                        latitude = Double.parseDouble(subString[0]);
+                        longitude = Double.parseDouble(subString[1]);
+                        listLocation.add(new LatLng(latitude,longitude));
+                        Log.i("Status: ", "Latitude: "+latitude+ " Longitude: "+longitude);
+                    }
+                    gMap.addPolygon(new PolygonOptions()
+                            .addAll(listLocation).strokeColor(Color.RED));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.i("Status ", "Lista con datos");
+        }
+
     }
 
     private void createOrUpdateMarkerByLocation(double latitude, double longitude){
@@ -109,7 +147,8 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
 
     @Override
     public void sendLocationSpeed(double latitude, double longitude, double speedMS, double speedKmHr) {
-
+        createOrUpdateMarkerByLocation(latitude, longitude);
+        //zoomToLocation(latitude, longitude);
     }
 
     @Override
@@ -138,10 +177,10 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
                 pointLatitude = jsonObject.getDouble("latitude");
                 pointLongitude = jsonObject.getDouble("longitude");
                 //Dibuja el poligono
-                gMap.addPolygon(new PolygonOptions()
-                        .addAll(listLocation).strokeColor(Color.RED));
+                /*gMap.addPolygon(new PolygonOptions()
+                        .addAll(listLocation).strokeColor(Color.RED));*/
                 //Centra el mapa
-                zoomToLocation(pointLatitude, pointLongitude);
+               // zoomToLocation(pointLatitude, pointLongitude);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
