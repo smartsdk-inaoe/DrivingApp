@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.provider.SyncStateContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.drivingapp.fragments.HomeFragment;
+import www.fiware.org.ngsi.datamodel.entity.DeviceSensor;
 import www.fiware.org.ngsi.utilities.Constants;
 
 /**
@@ -42,6 +45,7 @@ public class SendDataService {
         this.context = context;
         this.sendDataMethods = sendDataMethods;
         filter = new IntentFilter(Constants.SERVICE_CHANGE_LOCATION_DEVICE);
+        filter.addAction(Constants.SERVICE_RUNNING_SENSORS);
         ResponseReceiver receiver = new ResponseReceiver();
         // Registrar el receiver y su filtro
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, filter);
@@ -121,11 +125,24 @@ public class SendDataService {
                         }
 
                     }else{
-                        Log.i("STATUS: ","Carga los campus en el primer inicio de sesión");
+                        //Log.i("STATUS: ","Carga los campus en el primer inicio de sesión");
                         listCampus =  sqLiteDrivingApp.getAllCampus();
 
                     }
-                    //Log.i(STATUS, "VIEW Latitude: "+latitude+" Longitude: "+longitude+" Velocidad: "+speedMS+"m/s  Velocidad: "+speedKmHr+"km/hr");
+                    Log.i("STATUS 1", "VIEW Latitude: "+latitude+" Longitude: "+longitude+" Velocidad: "+speedMS+"m/s  Velocidad: "+speedKmHr+"km/hr");
+                    break;
+                case Constants.SERVICE_RUNNING_SENSORS:
+                    if ((DeviceSensor) intent.getExtras().get(Constants.ACCELEROMETER_RESULT_SENSORS) != null) {
+                        DeviceSensor deviceSensor = (DeviceSensor) intent.getExtras().get(Constants.ACCELEROMETER_RESULT_SENSORS);
+                        //Log.i("json ACCELEROMETER: ", ""+functions.checkForNewsAttributes(deviceSensor));
+                        //Log.i("Receiver acce: ", " ax: " + deviceSensor.getData().getValue().get(0) + " ay: " + deviceSensor.getData().getValue().get(1) + " az: " + deviceSensor.getData().getValue().get(2)+" id: " + deviceSensor.getId() + " type: " + deviceSensor.getType());
+                        Log.i("Receiver acce: ", " ax: " + deviceSensor.getData().getValue().get(0) + " ay: " + deviceSensor.getData().getValue().get(1) + " az: " + deviceSensor.getData().getValue().get(2));
+                        deviceSensor = null;
+                    }else if((DeviceSensor) intent.getExtras().get(Constants.GYROSCOPE_RESULT_SENSORS) != null){
+                        DeviceSensor deviceSensor = (DeviceSensor) intent.getExtras().get(Constants.GYROSCOPE_RESULT_SENSORS);
+                        //Log.i("Receiver gyro: ", " gx: " + deviceSensor.getData().getValue().get(0) + " gy: " + deviceSensor.getData().getValue().get(1) + " gz: " + deviceSensor.getData().getValue().get(2)+" id: " + deviceSensor.getId() + " type: " + deviceSensor.getType());
+                        Log.i("Receiver gyro: ", " gx: " + deviceSensor.getData().getValue().get(0) + " gy: " + deviceSensor.getData().getValue().get(1) + " gz: " + deviceSensor.getData().getValue().get(2));
+                    }
                     break;
             }
         }

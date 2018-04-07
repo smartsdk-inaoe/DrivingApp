@@ -30,8 +30,6 @@ public class Constants {
     public static final String SERVICE_RUNNING_MODE_OFFLINE = "service_running_mode_offline";
     public static final String SERVICE_RESULT_MODE_OFFLINE = "service_result_mode_offline";
 
-
-    //CONSTANTES PARA LOS Intent DE LOS SERVICIOS DE LOS SENSORES
     //CONSTANTES PARA LOS Intent DE LOS SERVICIOS DE LOS SENSORES
     public static final String SERVICE_CHANGE_LOCATION_DEVICE = "service_change_location_device";
     public static final String SERVICE_RESULT_LATITUDE = "latitude";
@@ -45,6 +43,7 @@ public class Constants {
     public static final String SERVICE_RUNNING_DEVICEMODEL= "service_running_devicemodel";
     public static final String SERVICE_RESULT_DEVICEMODEL = "service_result_devicemodel";
     public static final String SERVICE_RUNNING_SENSORS = "service_running_sensors";
-    public static final String SERVICE_RESULT_SENSORS = "service_result_sensors";
+    public static final String ACCELEROMETER_RESULT_SENSORS = "accelerometer_result_sensors";
+    public static final String GYROSCOPE_RESULT_SENSORS = "gyroscope_result_sensors";
 
 }

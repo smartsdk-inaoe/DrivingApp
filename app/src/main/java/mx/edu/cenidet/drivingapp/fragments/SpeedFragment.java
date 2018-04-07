@@ -35,6 +35,7 @@ public class SpeedFragment extends Fragment implements SendDataService.SendDataM
     public SpeedFragment() {
         context = HomeActivity.MAIN_CONTEXT;
         sendDataService = new SendDataService(context, this);
+        //sendDataService = HomeFragment.SENDDATASERVICE;
     }
 
 

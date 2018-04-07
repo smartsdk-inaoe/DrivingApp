@@ -56,6 +56,7 @@ public class MyLocationFragment extends Fragment implements OnMapReadyCallback, 
         context = HomeActivity.MAIN_CONTEXT;
         sqLiteDrivingApp = new SQLiteDrivingApp(context);
         sendDataService = new SendDataService(context, this);
+        //sendDataService = HomeFragment.SENDDATASERVICE;
         listPolyline = new ArrayList<>();
     }
 
@@ -158,7 +159,7 @@ public class MyLocationFragment extends Fragment implements OnMapReadyCallback, 
     public void sendLocationSpeed(double latitude, double longitude, double speedMS, double speedKmHr) {
         createOrUpdateMarkerByLocation(latitude, longitude);
         //listPolyline.add(new LatLng(latitude,longitude));
-        Log.i("STATUS: ","MyLocationFragment-sendLocationSpeed");
+        //sLog.i("STATUS: ","MyLocationFragment-sendLocationSpeed");
         //Log.i("SPEED: ", "VIEW Latitude: " + latitude + " Longitude: " + longitude + " Velocidad: " + speedMS + "m/s  Velocidad: " + speedKmHr + "km/hr");
     }
 
