@@ -44,6 +44,7 @@ import mx.edu.cenidet.drivingapp.fragments.HomeFragment;
 import mx.edu.cenidet.drivingapp.fragments.MyLocationFragment;
 import mx.edu.cenidet.drivingapp.fragments.SpeedFragment;
 import mx.edu.cenidet.drivingapp.services.DeviceService;
+import mx.edu.cenidet.drivingapp.services.SendDataService;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 import www.fiware.org.ngsi.utilities.Constants;
 import www.fiware.org.ngsi.utilities.Tools;
@@ -61,12 +62,15 @@ public class HomeActivity extends AppCompatActivity{
         setContentView(R.layout.activity_home);
         MAIN_CONTEXT = HomeActivity.this;
         appPreferences = new ApplicationPreferences();
+<<<<<<< HEAD
+=======
         //Inicializa los datos de conexión
         try {
             Tools.initialize("config.properties", getApplicationContext());
         } catch (Exception e) {
             e.printStackTrace();
         }
+>>>>>>> ae20dd13f4b52c007416146cf23c2647f4eb3196
 
         //Mandar a llamar el toolbar una vez generado en el activity_main de la actividad
         setToolbar();
@@ -178,6 +182,11 @@ public class HomeActivity extends AppCompatActivity{
         Intent deviceService = new Intent(MAIN_CONTEXT, DeviceService.class);
         startService(deviceService);
 
+        //Enviar Datos a los Fragment
+        Bundle bundle = new Bundle();
+        HomeFragment homeFragment = new HomeFragment();
+        bundle.putString("latitude1", "12345");
+        homeFragment.setArguments(bundle);
     }
 
     private void setToolbar(){

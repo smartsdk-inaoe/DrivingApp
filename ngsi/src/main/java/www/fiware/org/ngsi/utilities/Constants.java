@@ -30,8 +30,6 @@ public class Constants {
     public static final String SERVICE_RUNNING_MODE_OFFLINE = "service_running_mode_offline";
     public static final String SERVICE_RESULT_MODE_OFFLINE = "service_result_mode_offline";
 
-
-    //CONSTANTES PARA LOS Intent DE LOS SERVICIOS DE LOS SENSORES
     //CONSTANTES PARA LOS Intent DE LOS SERVICIOS DE LOS SENSORES
     public static final String SERVICE_CHANGE_LOCATION_DEVICE = "service_change_location_device";
     public static final String SERVICE_RESULT_LATITUDE = "latitude";
