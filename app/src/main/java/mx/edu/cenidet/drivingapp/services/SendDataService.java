@@ -60,6 +60,7 @@ public class SendDataService {
     public interface SendDataMethods{
         void sendLocationSpeed(double latitude, double longitude, double speedMS, double speedKmHr);
         void detectCampus(Campus campus, boolean statusLocation);
+        void sendDataAccelerometer(double ax, double ay, double az);
     }
 
 
@@ -142,6 +143,20 @@ public class SendDataService {
                         DeviceSensor deviceSensor = (DeviceSensor) intent.getExtras().get(Constants.GYROSCOPE_RESULT_SENSORS);
                         //Log.i("Receiver gyro: ", " gx: " + deviceSensor.getData().getValue().get(0) + " gy: " + deviceSensor.getData().getValue().get(1) + " gz: " + deviceSensor.getData().getValue().get(2)+" id: " + deviceSensor.getId() + " type: " + deviceSensor.getType());
                         Log.i("Receiver gyro: ", " gx: " + deviceSensor.getData().getValue().get(0) + " gy: " + deviceSensor.getData().getValue().get(1) + " gz: " + deviceSensor.getData().getValue().get(2));
+                    }
+                    break;
+                case Constants.SERVICE_RUNNING_SENSORS:
+                    if ((DeviceSensor) intent.getExtras().get(Constants.ACCELEROMETER_RESULT_SENSORS) != null) {
+                        DeviceSensor deviceSensor = (DeviceSensor) intent.getExtras().get(Constants.ACCELEROMETER_RESULT_SENSORS);
+                        //Log.i("json ACCELEROMETER: ", ""+functions.checkForNewsAttributes(deviceSensor));
+                        //Log.i("Receiver acce: ", " ax: " + deviceSensor.getData().getValue().get(0) + " ay: " + deviceSensor.getData().getValue().get(1) + " az: " + deviceSensor.getData().getValue().get(2)+" id: " + deviceSensor.getId() + " type: " + deviceSensor.getType());
+                        sendDataMethods.sendDataAccelerometer(deviceSensor.getData().getValue().get(0), deviceSensor.getData().getValue().get(1), deviceSensor.getData().getValue().get(2));
+                        //Log.i("Receiver acce: ", " ax: " + deviceSensor.getData().getValue().get(0) + " ay: " + deviceSensor.getData().getValue().get(1) + " az: " + deviceSensor.getData().getValue().get(2));
+                        deviceSensor = null;
+                    }else if((DeviceSensor) intent.getExtras().get(Constants.GYROSCOPE_RESULT_SENSORS) != null){
+                        DeviceSensor deviceSensor = (DeviceSensor) intent.getExtras().get(Constants.GYROSCOPE_RESULT_SENSORS);
+                        //Log.i("Receiver gyro: ", " gx: " + deviceSensor.getData().getValue().get(0) + " gy: " + deviceSensor.getData().getValue().get(1) + " gz: " + deviceSensor.getData().getValue().get(2)+" id: " + deviceSensor.getId() + " type: " + deviceSensor.getType());
+                        //Log.i("Receiver gyro: ", " gx: " + deviceSensor.getData().getValue().get(0) + " gy: " + deviceSensor.getData().getValue().get(1) + " gz: " + deviceSensor.getData().getValue().get(2));
                     }
                     break;
             }

@@ -57,7 +57,7 @@ public class MethodPOST extends AsyncTask<String, String, Response> {
             if (hURLConnection.getHeaderField(0) != null){
                 mResponse.setxSubjectToken(hURLConnection.getHeaderField(0));
             }
-            if (mResponse.getHttpCode()==201) {
+            if (mResponse.getHttpCode()==201 || mResponse.getHttpCode()==200) {
                 try {
                     BufferedReader bReader = new BufferedReader(new InputStreamReader(hURLConnection.getInputStream()));
                     String sLine;

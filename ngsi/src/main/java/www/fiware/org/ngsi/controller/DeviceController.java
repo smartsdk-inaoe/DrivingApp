@@ -31,7 +31,7 @@ import static www.fiware.org.ngsi.utilities.Constants.PREFERENCE_STATUS_OFFLINE_
  * Created by Cipriano on 26/04/2017.
  */
 
-public class DeviceResources implements HttpPostCreateAsync.ExecRequestPost, HttpPostUpdateAsync.ExecRequestPostUpdate, HttpDeleteAsync.ExecRequestDelete, HttpGetAsync.ExecRequestGet, HttpPostUpdateOfflineAsync.ExecRequestPostUpdateOffline, HttpPostCreateOfflineAsync.ExecRequestPostOffline{
+public class DeviceController implements HttpPostCreateAsync.ExecRequestPost, HttpPostUpdateAsync.ExecRequestPostUpdate, HttpDeleteAsync.ExecRequestDelete, HttpGetAsync.ExecRequestGet, HttpPostUpdateOfflineAsync.ExecRequestPostUpdateOffline, HttpPostCreateOfflineAsync.ExecRequestPostOffline{
     DeviceResourceMethods aRMethods;
     private static String type;
     private String parameters = "";
@@ -48,7 +48,7 @@ public class DeviceResources implements HttpPostCreateAsync.ExecRequestPost, Htt
     private SQLiteHelper sqlHelper;
     private Tbl_Data_Temp tblTemp;
 
-    public DeviceResources(DeviceResourceMethods eRMethods) {
+    public DeviceController(DeviceResourceMethods eRMethods) {
         this.aRMethods = eRMethods;
     }
 

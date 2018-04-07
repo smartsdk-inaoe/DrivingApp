@@ -12,10 +12,10 @@ import www.fiware.org.ngsi.db.sqlite.entity.Tbl_Data_Temp;
  * Created by Cipriano on 10/26/2017.
  */
 
-public class ControllerSQLite {
+public class SQLiteController {
     Context context;
     SQLiteHelper sqLiteHelper;
-    public ControllerSQLite(Context context){
+    public SQLiteController(Context context){
         sqLiteHelper = new SQLiteHelper(context);
     }
 

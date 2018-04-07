@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
@@ -28,6 +29,10 @@ public class SpeedFragment extends Fragment implements SendDataService.SendDataM
     private View rootView;
     private Context context;
     private TextView tvSpeed;
+    private TextView tvAcceleration;
+    private TextView tvLocation;
+    private ProgressBar pbSpeed;
+    //private TextView tvSpeed;
     private static final String STATUS = "Status";
 
     private SendDataService sendDataService;
@@ -43,8 +48,10 @@ public class SpeedFragment extends Fragment implements SendDataService.SendDataM
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_speed, container, false);
-        tvSpeed = rootView.findViewById(R.id.tvSpeed);
-
+        //tvSpeed = rootView.findViewById(R.id.tvSpeed);
+        tvSpeed = (TextView) rootView.findViewById(R.id.tvSpeed);
+        tvAcceleration = (TextView) rootView.findViewById(R.id.tvAcceleration);
+        tvLocation = (TextView) rootView.findViewById(R.id.tvLocation);
         return rootView;
     }
 
@@ -54,19 +61,24 @@ public class SpeedFragment extends Fragment implements SendDataService.SendDataM
         //tvSpeed.setText(getArguments().getString("speed"));
     }
 
-    public void renderText(String text) {
-        tvSpeed.setText(text);
-    }
-
     @Override
     public void sendLocationSpeed(double latitude, double longitude, double speedMS, double speedKmHr) {
-        tvSpeed.setText("Latitude: " + latitude + " Longitude: " + longitude + " Velocidad: " + speedMS + "m/s  Velocidad: " + speedKmHr + "km/hr");
+        tvLocation.setText("Lat. "+latitude+", Lon. "+longitude);
+        tvSpeed.setText(speedMS+"m/s, "+speedKmHr+"km/hr");
+
+        //tvSpeed.setText("Latitude: " + latitude + " Longitude: " + longitude + " Velocidad: " + speedMS + "m/s  Velocidad: " + speedKmHr + "km/hr");
         //Log.i("SPEED: ", "VIEW Latitude: " + latitude + " Longitude: " + longitude + " Velocidad: " + speedMS + "m/s  Velocidad: " + speedKmHr + "km/hr");
     }
 
     @Override
     public void detectCampus(Campus campus, boolean statusLocation) {
 
+    }
+
+    @Override
+    public void sendDataAccelerometer(double ax, double ay, double az) {
+        tvAcceleration.setText("ax: "+ax+"\nay: "+ay+"\naz: "+az);
+        //Log.i("STATUS 2: ","ax: "+ax+" ay: "+ay+" az: "+az);
     }
 
 }

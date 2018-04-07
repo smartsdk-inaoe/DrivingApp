@@ -15,7 +15,8 @@ public enum  ConfigServer {
 
     //#Host
     http_host_node("https://smartsdk-web-service.herokuapp.com/api/"),
-    http_host_login("http://207.249.127.96:5000/v3/auth/"),
+    //http_host_login("http://207.249.127.96:5000/v3/auth/"),
+    http_host_login("https://drivingapp-python.herokuapp.com/"),
     http_host_mongo("https://driving-monitor-service.herokuapp.com/api/"),
 
     //#Entities
@@ -27,6 +28,7 @@ public enum  ConfigServer {
     //#methods
     //-----login----
     http_tokens("tokens"),
+    http_login("login"),
 
     //---generales----
     http_getAllActive("/getAllActive"),

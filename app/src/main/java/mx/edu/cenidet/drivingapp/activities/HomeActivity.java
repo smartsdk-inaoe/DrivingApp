@@ -47,6 +47,7 @@ import mx.edu.cenidet.drivingapp.services.DeviceService;
 import mx.edu.cenidet.drivingapp.services.SendDataService;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 import www.fiware.org.ngsi.utilities.Constants;
+import www.fiware.org.ngsi.utilities.Tools;
 
 public class HomeActivity extends AppCompatActivity{
     private DrawerLayout drawerLayout;
@@ -61,6 +62,15 @@ public class HomeActivity extends AppCompatActivity{
         setContentView(R.layout.activity_home);
         MAIN_CONTEXT = HomeActivity.this;
         appPreferences = new ApplicationPreferences();
+<<<<<<< HEAD
+=======
+        //Inicializa los datos de conexión
+        try {
+            Tools.initialize("config.properties", getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+>>>>>>> ae20dd13f4b52c007416146cf23c2647f4eb3196
 
         //Mandar a llamar el toolbar una vez generado en el activity_main de la actividad
         setToolbar();
@@ -71,12 +81,12 @@ public class HomeActivity extends AppCompatActivity{
 
         //TabLayout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_home));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_speed));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_campus_map));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_alerts));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_my_campus));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.menu_my_location));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_home_menu));//setText(R.string.menu_home));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_speed_menu));//.setText(R.string.menu_speed));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_campus_menu));//setText(R.string.menu_campus_map));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_my_alerts));//.setText(R.string.menu_alerts));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_my_campus));//setText(R.string.menu_my_campus));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_my_location));//setText(R.string.menu_my_location));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -167,6 +177,7 @@ public class HomeActivity extends AppCompatActivity{
         tvUserName.setText(appPreferences.getPreferenceString(getApplicationContext(), ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_USER_NAME));
         navigationView.addHeaderView(view);
 
+        isDrivingUser();
         //Inicia el servicio para la captura de la posición.
         Intent deviceService = new Intent(MAIN_CONTEXT, DeviceService.class);
         startService(deviceService);
@@ -237,5 +248,28 @@ public class HomeActivity extends AppCompatActivity{
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void isDrivingUser(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage(R.string.message_is_driving_user_title)
+                .setIcon(R.drawable.ic_car)
+                .setNegativeButton(R.string.message_is_driving_user_no,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //acciones del boton Si
+                            }
+                        })
+                .setPositiveButton(R.string.message_is_driving_user_yes,
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                //acciones del boton Si
+                            }
+                        });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+
+                    //.setCancelable(false)
 
 }
