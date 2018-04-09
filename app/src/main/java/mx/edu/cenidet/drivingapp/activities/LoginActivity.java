@@ -206,7 +206,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case 200:
             case 201:
                 //Toast.makeText(getApplicationContext(), "CODE:"+response.getHttpCode(), Toast.LENGTH_SHORT).show();
-                if((response.getBodyString().equals("") || response.getBodyString() == null)){
+                /*if((response.getBodyString().equals("") || response.getBodyString() == null)){
                     Toast.makeText(getApplicationContext(), R.string.message_login_not_found, Toast.LENGTH_SHORT).show();
                 }else{
                     JSONObject jsonObject = response.parseJsonObject(response.getBodyString());
@@ -219,14 +219,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-                /*if((response.getBodyString().equals("") || response.getBodyString() == null) || (response.getxSubjectToken().equals("") || response.getxSubjectToken() == null)){
+                }*/
+                if((response.getBodyString().equals("") || response.getBodyString() == null) || (response.getxSubjectToken().equals("") || response.getxSubjectToken() == null)){
                     Toast.makeText(getApplicationContext(), R.string.message_login_not_found, Toast.LENGTH_SHORT).show();
                 }else{
                     token = response.getxSubjectToken();
                     email = etLoginEmail.getText().toString();
                     userController.readUser(email);
-                }*/
+                }
                 break;
             case 500:
             case 401:

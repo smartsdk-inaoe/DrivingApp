@@ -15,9 +15,11 @@ public enum  ConfigServer {
 
     //#Host
     http_host_node("https://smartsdk-web-service.herokuapp.com/api/"),
-    //http_host_login("http://207.249.127.96:5000/v3/auth/"),
-    http_host_login("https://drivingapp-python.herokuapp.com/"),
+    http_host_login("http://207.249.127.96:5000/v3/auth/"),
+    //http_host_login("https://drivingapp-python.herokuapp.com/"),
     http_host_mongo("https://driving-monitor-service.herokuapp.com/api/"),
+    http_host_alert("https://driving-monitor-service.herokuapp.com/api/alertsCampus/"),
+    //https://driving-monitor-service.herokuapp.com/api/alertsCampus/5a08f54972a5b81a7d040119
 
     //#Entities
     http_user("user"),

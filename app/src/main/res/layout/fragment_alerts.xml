@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     tools:context="mx.edu.cenidet.drivingapp.fragments.AlertsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ListView
+        android:id="@+id/listViewAlerts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="alerts"/>
+        android:layout_height="match_parent" />
+
     <include android:id="@+id/btnFloating" layout="@layout/floating_button"/>
 </FrameLayout>

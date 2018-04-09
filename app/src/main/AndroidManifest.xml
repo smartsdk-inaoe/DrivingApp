@@ -31,21 +31,22 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <service android:name=".services.DeviceService"></service>
+        <service android:name=".services.DeviceService" />
 
-        <activity android:name=".activities.MapDetailActivity"></activity>
-        <service
-            android:name=".services.DrivingFirebaseMessagingService">
+        <activity android:name=".activities.MapDetailActivity" />
+
+        <service android:name=".services.DrivingFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name=".services.MyFirebaseInstanceIDService">
+        <service android:name=".services.MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".activities.AlertMapDetailActivity"></activity>
     </application>
 
 </manifest>

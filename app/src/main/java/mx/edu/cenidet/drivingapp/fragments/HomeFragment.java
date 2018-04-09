@@ -51,16 +51,23 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
+
         tvDetailCampus = (TextView) rootView.findViewById(R.id.tvDetailCampus);
         imagenViewDetailCampus = (ImageView) rootView.findViewById(R.id.imagenViewDetailCampus);
+
+        //imagenViewDetailCampus.setImageResource(R.drawable.outside);
+        //tvDetailCampus.setText(context.getString(R.string.message_any_campus));
+
         btnFloating = (FloatingActionButton) rootView.findViewById(R.id.btnFloating);
         btnFloating.setOnClickListener(this);
+
         return rootView;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
     }
 
     @Override
@@ -73,13 +80,20 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
     public void detectCampus(Campus campus, boolean statusLocation) {
         if(statusLocation == true){
             //Log.i("STATUS: ","Campus Name: "+campus.getName()+" statusLocation: "+statusLocation);
-            imagenViewDetailCampus.setImageResource(R.drawable.inside);
-            tvDetailCampus.setText(context.getString(R.string.message_name_campus)+": "+campus.getName()+"\n"+context.getString(R.string.message_address_campus)+": "+campus.getAddress());
+            if(imagenViewDetailCampus != null && tvDetailCampus != null){
+                imagenViewDetailCampus.setImageResource(R.drawable.inside);
+                tvDetailCampus.setText(context.getString(R.string.message_name_campus)+": "+campus.getName()+"\n"+context.getString(R.string.message_address_campus)+": "+campus.getAddress());
+            }
         }else{
-            imagenViewDetailCampus.setImageResource(R.drawable.inside);
-            tvDetailCampus.setText(context.getString(R.string.message_name_campus));
             //imagenViewDetailCampus.setImageResource(R.drawable.outside);
-            //tvDetailCampus.setText(context.getString(R.string.message_any_campus));
+            //tvDetailCampus.setText(context.getString(R.string.message_name_campus));
+
+            Log.i("STATUS 1: ","DetectCampus...!"+ statusLocation);
+            if(imagenViewDetailCampus != null && tvDetailCampus != null){
+                imagenViewDetailCampus.setImageResource(R.drawable.outside);
+                tvDetailCampus.setText(context.getString(R.string.message_any_campus));
+            }
+            //tvDetailCampus.setText("No te encuentras en ningun campus");
         }
     }
 
@@ -101,7 +115,7 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
                 alert.getDateObserved().setValue("2018-02-12T18:10:33.00Z");
                 alert.getDescription().setValue("Test Alert Android 1");
                 alert.getLocation().setValue("18.879691, -99.221640");
-                alert.getSeverity().setValue("high");
+                alert.getSeverity().setValue("informational");
                 alert.getSubCategory().setValue("UnauthorizedSpeedDetection");
                 alert.getValidFrom().setValue("2018-02-12T18:10:33.00Z");
                 alert.getValidTo().setValue("2018-02-12T18:10:33.00Z");
