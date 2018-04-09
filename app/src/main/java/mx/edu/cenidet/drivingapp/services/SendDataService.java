@@ -46,6 +46,7 @@ public class SendDataService {
         this.sendDataMethods = sendDataMethods;
         filter = new IntentFilter(Constants.SERVICE_CHANGE_LOCATION_DEVICE);
         filter.addAction(Constants.SERVICE_RUNNING_SENSORS);
+        filter.addAction(Constants.SERVICE_CHANGE_WRONG_WAY);
         ResponseReceiver receiver = new ResponseReceiver();
         // Registrar el receiver y su filtro
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, filter);
@@ -61,6 +62,7 @@ public class SendDataService {
         void sendLocationSpeed(double latitude, double longitude, double speedMS, double speedKmHr);
         void detectCampus(Campus campus, boolean statusLocation);
         void sendDataAccelerometer(double ax, double ay, double az);
+        void sendEvent(String event);
     }
 
 
@@ -144,6 +146,13 @@ public class SendDataService {
                         //Log.i("Receiver gyro: ", " gx: " + deviceSensor.getData().getValue().get(0) + " gy: " + deviceSensor.getData().getValue().get(1) + " gz: " + deviceSensor.getData().getValue().get(2)+" id: " + deviceSensor.getId() + " type: " + deviceSensor.getType());
                         //Log.i("Receiver gyro: ", " gx: " + deviceSensor.getData().getValue().get(0) + " gy: " + deviceSensor.getData().getValue().get(1) + " gz: " + deviceSensor.getData().getValue().get(2));
                     }
+                    break;
+                case Constants.SERVICE_CHANGE_WRONG_WAY:
+                        if(intent.getExtras().getString(Constants.SERVICE_RESULT_WRONG_WAY_OUTPUT) != null){
+                            sendDataMethods.sendEvent(intent.getExtras().getString(Constants.SERVICE_RESULT_WRONG_WAY_OUTPUT));
+                        }else {
+
+                        }
                     break;
             }
         }

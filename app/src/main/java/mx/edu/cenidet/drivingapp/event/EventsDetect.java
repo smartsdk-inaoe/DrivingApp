@@ -18,13 +18,24 @@ public class EventsDetect {
     private static double segmentInclination=1; // pendiente que tiene la calle
     private static double brakingTolerance=0; //% de tolerancia que se aplicara a la distancia de frenado
 
-    public static boolean oppositeDirectionDisplacement(LatLng lastPoint, LatLng currentPoint, LatLng endPoint){
-        boolean flag=false;
-        double distance1=SphericalUtil.computeDistanceBetween(lastPoint,endPoint);
-        double distance2=SphericalUtil.computeDistanceBetween(currentPoint,endPoint);
-        if(distance2>distance1) flag=true;
-        System.out.println(distance1);
-        System.out.println(distance2);
+    public static String oppositeDirectionDisplacement(LatLng lastPoint, LatLng currentPoint, LatLng startPoint, LatLng endPoint){
+        String flag="undefined";
+        double distanceTotal=SphericalUtil.computeDistanceBetween(startPoint, endPoint);
+
+        double distance1Endpoint=SphericalUtil.computeDistanceBetween(lastPoint,endPoint);
+        double distance2Endpoint=SphericalUtil.computeDistanceBetween(currentPoint,endPoint);
+        double distance2StartPoint=SphericalUtil.computeDistanceBetween(currentPoint,startPoint);
+        double distance1StartPoint=SphericalUtil.computeDistanceBetween(lastPoint,startPoint);
+        if(PolyUtil.distanceToLine(currentPoint,startPoint,endPoint)<5) {
+            if ( distanceTotal + 3 >= distance2StartPoint + distance2Endpoint){
+                if(distance2Endpoint > distance1Endpoint){
+                    flag="wrongWay";
+                }else if(distance2Endpoint < distance1Endpoint){
+                    flag="correctWay";
+                }
+            }
+
+        }
         return flag;
     }
 
@@ -60,7 +71,7 @@ public class EventsDetect {
         double lastSpeed=2.77; //metros por segundo
         double currentSpeed=20; //metros por segundos
 
-        System.out.println(oppositeDirectionDisplacement(latLng1,latLng2,end));
+       // System.out.println(oppositeDirectionDisplacement(latLng1,latLng2,end));
         System.out.println(suddenStop(lastSpeed,currentSpeed,latLng1,latLng2));
     }
 }

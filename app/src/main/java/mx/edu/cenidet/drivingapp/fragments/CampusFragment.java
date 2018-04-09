@@ -194,4 +194,9 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
     public void sendDataAccelerometer(double ax, double ay, double az) {
         //Log.i("STATUS 3: ","ax: "+ax+" ay: "+ay+" az: "+az);
     }
+
+    @Override
+    public void sendEvent(String event) {
+
+    }
 }

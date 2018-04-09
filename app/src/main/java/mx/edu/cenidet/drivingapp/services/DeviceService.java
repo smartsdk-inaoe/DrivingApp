@@ -25,6 +25,7 @@ import android.view.WindowManager;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
+import  mx.edu.cenidet.drivingapp.event.EventsDetect;
 
 import org.json.JSONException;
 
@@ -70,6 +71,9 @@ public class DeviceService extends Service{
     private double speedFrom, speedTo;
     private HashMap<String, Double> hashMapSpeedFromTo;
     private HashMap<String, Double> hashMapLatLngFromTo;
+
+
+
 
     /** variables de control y configuración**/
 
@@ -476,6 +480,17 @@ public class DeviceService extends Service{
                     Log.i("STATUS", "hashMapLatLngFromTo NO VACIO:\nlatitudeFrom: " + hashMapLatLngFromTo.get("latitudeFrom") + " longitudeFrom: " + hashMapLatLngFromTo.get("longitudeFrom") + " latitudeTo: " + hashMapLatLngFromTo.get("latitudeTo") + " longitudeTo: " + hashMapLatLngFromTo.get("longitudeTo"));
                 }
 
+                String salida= EventsDetect.oppositeDirectionDisplacement(new LatLng(hashMapLatLngFromTo.get("latitudeFrom"), hashMapLatLngFromTo.get("longitudeFrom")),
+                        new LatLng(hashMapLatLngFromTo.get("latitudeTo"), hashMapLatLngFromTo.get("longitudeTo")),new LatLng(18.8797180,-99.2216666),new LatLng(18.8794591,-99.22154322));
+
+                //if(salida.equals("wrongWay")){
+                    Intent intentWrongWay = new Intent(Constants.SERVICE_CHANGE_WRONG_WAY).putExtra(Constants.SERVICE_RESULT_WRONG_WAY_OUTPUT, salida);
+                    LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(intentWrongWay);
+              /*  }else{
+                    Intent intentWrongWay = new Intent(Constants.SERVICE_CHANGE_WRONG_WAY).putExtra(Constants.SERVICE_RESULT_WRONG_WAY_OUTPUT, "false");
+                    LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(intentWrongWay);
+
+                }*/
                 Log.i(STATUS, "SPEED: " + speedKmHr);
                 //Logica para obtener la velocidad anterior y actual
                 if (hashMapSpeedFromTo.isEmpty() || hashMapSpeedFromTo.size() == 0) {

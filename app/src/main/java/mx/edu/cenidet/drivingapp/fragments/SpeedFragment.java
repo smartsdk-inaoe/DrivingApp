@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.drivingapp.R;
@@ -79,6 +80,18 @@ public class SpeedFragment extends Fragment implements SendDataService.SendDataM
     public void sendDataAccelerometer(double ax, double ay, double az) {
         tvAcceleration.setText("ax: "+ax+"\nay: "+ay+"\naz: "+az);
         //Log.i("STATUS 2: ","ax: "+ax+" ay: "+ay+" az: "+az);
+    }
+
+    @Override
+    public void sendEvent(String event) {
+        if(tvAcceleration != null){
+            tvAcceleration.setText(event);
+        }
+       /* if(event.equals("true")){
+            Toast.makeText(getContext(), "Usted va en sentido contrario", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(getContext(), "Usted va en dirección correcta", Toast.LENGTH_SHORT).show();
+        }*/
     }
 
 }

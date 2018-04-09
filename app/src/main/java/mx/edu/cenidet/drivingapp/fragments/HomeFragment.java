@@ -103,6 +103,11 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
     }
 
     @Override
+    public void sendEvent(String event) {
+
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnFloating:

@@ -46,4 +46,7 @@ public class Constants {
     public static final String ACCELEROMETER_RESULT_SENSORS = "accelerometer_result_sensors";
     public static final String GYROSCOPE_RESULT_SENSORS = "gyroscope_result_sensors";
 
+    //Events
+    public static final String SERVICE_CHANGE_WRONG_WAY = "wrong_way";
+    public static final String SERVICE_RESULT_WRONG_WAY_OUTPUT = "wrong_way_output";
 }
