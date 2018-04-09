@@ -220,16 +220,42 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         e.printStackTrace();
                     }
                 }*/
-                if((response.getBodyString().equals("") || response.getBodyString() == null) || (response.getxSubjectToken().equals("") || response.getxSubjectToken() == null)){
+                /*if((response.getBodyString().equals("") || response.getBodyString() == null) || (response.getxSubjectToken().equals("") || response.getxSubjectToken() == null)){
                     Toast.makeText(getApplicationContext(), R.string.message_login_not_found, Toast.LENGTH_SHORT).show();
                 }else{
                     token = response.getxSubjectToken();
                     email = etLoginEmail.getText().toString();
                     userController.readUser(email);
+                }*/
+               // Log.i("STATUS: ", "Code: "+response.getHttpCode());
+                //Log.i("STATUS: ", "Body: "+response.getBodyString());
+                if(response.getBodyString().equals("") || response.getBodyString() == null){
+                    Toast.makeText(getApplicationContext(), R.string.message_login_not_found, Toast.LENGTH_SHORT).show();
+                }else{
+                    JSONObject jsonObject = response.parseJsonObject(response.getBodyString());
+                    Log.i("Status:", "JSON: "+jsonObject);
+                    try {
+                        token = jsonObject.getString("token");
+                        email = jsonObject.getJSONObject("user").getString("email");
+                        String id = jsonObject.getJSONObject("user").getString("id");
+                        String userName = jsonObject.getJSONObject("user").getString("firstName")+" "+jsonObject.getJSONObject("user").getString("lastName");
+                        //email = etLoginEmail.getText().toString();
+                        Log.i("Status:", "token: "+token+" email: "+email +" id: "+id+" userName: "+userName);
+
+                        appPreferences.saveOnPreferenceString(getApplicationContext(), ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_TOKEN, token);
+                        appPreferences.saveOnPreferenceString(getApplicationContext(), ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_USER_ID, ""+id);
+                        appPreferences.saveOnPreferenceString(getApplicationContext(), ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_USER_NAME, userName);
+                        appPreferences.saveOnPreferenceString(getApplicationContext(), ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_USER_EMAIL, email);
+                        goToHome();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             case 500:
             case 401:
+            case 404:
                 Toast.makeText(getApplicationContext(), R.string.message_user_not_found, Toast.LENGTH_SHORT).show();
                 break;
             default:
