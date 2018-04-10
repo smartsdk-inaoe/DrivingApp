@@ -19,26 +19,48 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import mx.edu.cenidet.cenidetsdk.controllers.CampusController;
+import mx.edu.cenidet.cenidetsdk.controllers.DeviceTokenControllerSdk;
 import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.cenidetsdk.httpmethods.Response;
+import mx.edu.cenidet.cenidetsdk.utilities.ConstantSdk;
 import mx.edu.cenidet.drivingapp.R;
+import www.fiware.org.ngsi.utilities.ApplicationPreferences;
+import www.fiware.org.ngsi.utilities.DevicePropertiesFunctions;
 
-public class SplashActivity extends AppCompatActivity implements CampusController.CampusServiceMethods{
+public class SplashActivity extends AppCompatActivity implements CampusController.CampusServiceMethods, DeviceTokenControllerSdk.DeviceTokenServiceMethods{
     private Intent mIntent;
     private CampusController campusController;
     private SQLiteDrivingApp sqLiteDrivingApp;
     private ArrayList<Campus> listCampus;
+
+    //Envío del token de firebase
+    private DeviceTokenControllerSdk deviceTokenControllerSdk;
+    private String fcmToken;
+    private Context context;
+    private ApplicationPreferences appPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         sqLiteDrivingApp = new SQLiteDrivingApp(this);
         campusController = new CampusController(getApplicationContext(), this);
         listCampus = sqLiteDrivingApp.getAllCampus();
 
+        //objeto que utilizaremos para llamar a los metodos de la gestion del token de firebase
+        appPreferences = new ApplicationPreferences();
+        deviceTokenControllerSdk = new DeviceTokenControllerSdk(context, this);
+        fcmToken = appPreferences.getPreferenceString(getApplicationContext(),ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_FCMTOKEN);
+        if (!fcmToken.equals("") || fcmToken != null){
+            deviceTokenControllerSdk.createDeviceToken(fcmToken, new DevicePropertiesFunctions().getDeviceId(context));
+        }else{
+            //deviceTokenControllerSdk.updateDeviceToken(fcmToken, new DevicePropertiesFunctions().getDeviceId(context));
+        }
+
         if(listCampus.size() == 0){
             campusController.readCampus();
         }else{
+            /*//Probando la lista de campus para mostrar en consola.
             JSONArray arrayLocation;
             String originalString, clearString;
             double latitude, longitude;
@@ -67,7 +89,7 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
                 Log.i("Status: ", "pointMap: "+listCampus.get(i).getPointMap());
                 Log.i("Status: ", "Create: "+listCampus.get(i).getDateCreated());
                 Log.i("Status: ", "Modified: "+listCampus.get(i).getDateModified());
-            }
+            }*/
             Log.i("Status ", "Lista con datos");
         }
 
@@ -141,22 +163,22 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
                     try {
                         campus = new Campus();
                         JSONObject object = jsonArray.getJSONObject(i);
-                         campus.setId(object.getString("_id"));
-                         campus.setType(object.getString("type"));
+                        campus.setId(object.getString("_id"));
+                        campus.setType(object.getString("type"));
                         campus.setName(object.getString("name"));
                         campus.setAddress(object.getString("address"));
                         campus.setLocation(""+object.getJSONArray("location"));
                         campus.setPointMap(""+object.getJSONArray("pointMap"));
                         campus.setDateCreated(object.getString("dateCreated"));
                         campus.setDateModified(object.getString("dateModified"));
-                        Log.i("Status: ", "ID: "+campus.getId());
+                        /*Log.i("Status: ", "ID: "+campus.getId());
                         Log.i("Status: ", "type: "+campus.getType());
                         Log.i("Status: ", "name: "+campus.getName());
                         Log.i("Status: ", "address: "+campus.getAddress());
                         Log.i("Status: ", "location: "+campus.getLocation());
                         Log.i("Status: ", "pointMap: "+campus.getPointMap());
                         Log.i("Status: ", "Create: "+campus.getDateCreated());
-                        Log.i("Status: ", "Modified: "+campus.getDateModified());
+                        Log.i("Status: ", "Modified: "+campus.getDateModified());*/
                         if(sqLiteDrivingApp.createCampus(campus) == true){
                             Log.i("Status: ", "Dato insertado correctamente...!");
                         }else{
@@ -170,5 +192,29 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
                 }
                 break;
         }
+    }
+
+    @Override
+    public void createDeviceToken(Response response) {
+        Log.i("STATUS", "Firebase Service Create: CODE: "+ response.getHttpCode());
+        switch (response.getHttpCode()){
+            case 201:
+                Log.i("STATUS: ", "El token se genero exitosamente...!");
+                break;
+            case 400:
+                Log.i("STATUS: ", "El token ya existe...!");
+                break;
+        }
+
+    }
+
+    @Override
+    public void readDeviceToken(Response response) {
+
+    }
+
+    @Override
+    public void updateDeviceToken(Response response) {
+
     }
 }

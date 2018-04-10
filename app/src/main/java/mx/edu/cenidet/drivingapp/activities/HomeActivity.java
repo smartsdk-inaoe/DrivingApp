@@ -33,8 +33,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import mx.edu.cenidet.cenidetsdk.controllers.DeviceTokenControllerSdk;
 import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
+import mx.edu.cenidet.cenidetsdk.httpmethods.Response;
 import mx.edu.cenidet.cenidetsdk.utilities.ConstantSdk;
 import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.adapters.PagerAdapter;
@@ -55,13 +57,13 @@ public class HomeActivity extends AppCompatActivity{
     public static Context MAIN_CONTEXT = null;
     private FrameLayout frameLayout;
     private ApplicationPreferences appPreferences;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         MAIN_CONTEXT = HomeActivity.this;
         appPreferences = new ApplicationPreferences();
+
         //Inicializa los datos de conexión
         try {
             Tools.initialize("config.properties", getApplicationContext());
@@ -239,7 +241,8 @@ public class HomeActivity extends AppCompatActivity{
                 campus.setDateModified("2017-11-13T01:28:41.192Z");
                 SQLiteDrivingApp sqLiteDrivingApp = new SQLiteDrivingApp(MAIN_CONTEXT);
                 sqLiteDrivingApp.createCampus(campus);*/
-                Toast.makeText(getApplicationContext(), "Notify...!", Toast.LENGTH_LONG).show();
+                Log.i("STATUS", "TOKEN-1: "+appPreferences.getPreferenceString(getApplicationContext(),ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_FCMTOKEN));
+                //Toast.makeText(getApplicationContext(), "Notify...!", Toast.LENGTH_LONG).show();
                 return true;
 
         }
@@ -267,6 +270,6 @@ public class HomeActivity extends AppCompatActivity{
         alert.show();
     }
 
-                    //.setCancelable(false)
+    //.setCancelable(false)
 
 }

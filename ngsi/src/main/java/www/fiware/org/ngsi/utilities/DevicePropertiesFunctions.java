@@ -15,6 +15,7 @@ import android.util.Log;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -189,9 +190,31 @@ public class DevicePropertiesFunctions {
         return "";
     }
 
+    /**
+     * @param context contexto donde se ejecutara el metodo
+     * @return el identificador unico de android
+     */
     public String getAndroidId(Context context){
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         return android_id;
+    }
+
+    /**
+     * @param context contexto donde se ejecutara el metodo.
+     * @return el identificador unico del dispositivo movil.
+     */
+    public String getDeviceId(Context context){
+        return "Device_Smartphone_"+getAndroidId(context);
+    }
+
+    /**
+     * @param context contexto donde se ejecutara el metodo.
+     * @return el identificador unico de la alerta.
+     */
+    public String getAlertId(Context context){
+        Date currentDate = new Date();
+        Long date = currentDate.getTime() / 1000;
+        return "Alert:Device_Smartphone_"+new DevicePropertiesFunctions().getAndroidId(context)+":"+date;
     }
 
     /**

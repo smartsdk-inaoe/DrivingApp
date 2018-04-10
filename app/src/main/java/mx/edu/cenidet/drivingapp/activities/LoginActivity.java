@@ -51,11 +51,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String token;
     private Intent mIntent;
     private Context context;
+    public static Context LOGIN_CONTEXT = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        context = this;
+        LOGIN_CONTEXT = LoginActivity.this;
+        context = LOGIN_CONTEXT;
         appPreferences = new ApplicationPreferences();
         if(setCredentialsIfExist()){
             mIntent = new Intent(this, SplashActivity.class);

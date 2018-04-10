@@ -32,10 +32,12 @@ public enum  ConfigServer {
     http_organization("organization"),
     http_zone("zone"),
     http_campus("campus"),
+    http_device("device"),
 
     //#methods
     //-----login----
     http_tokens("tokens"),
+    http_token("token"),
     http_login("login"),
 
     //---generales----
