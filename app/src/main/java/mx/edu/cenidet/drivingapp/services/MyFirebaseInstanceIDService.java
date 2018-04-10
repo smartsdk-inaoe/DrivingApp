@@ -26,12 +26,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         Log.d(TAG, "Refreshed token: " + refreshedToken);
         fcmToken = appPreferences.getPreferenceString(getApplicationContext(),ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_FCMTOKEN);
         if(refreshedToken != null){
-            if (fcmToken.equals("") || fcmToken == null){
                 appPreferences.saveOnPreferenceString(getApplicationContext(), ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_FCMTOKEN, refreshedToken);
-                //deviceTokenControllerSdk.createDeviceToken(refreshedToken, new DevicePropertiesFunctions().getDeviceId(context));
-            }else{
-                //deviceTokenControllerSdk.updateDeviceToken(fcmToken, new DevicePropertiesFunctions().getDeviceId(context));
-            }
         }
 
         sendRegistrationToServer(refreshedToken);

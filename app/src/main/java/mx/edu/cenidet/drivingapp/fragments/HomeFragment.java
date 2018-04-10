@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 
@@ -24,6 +25,7 @@ import www.fiware.org.ngsi.datamodel.entity.Alert;
 import www.fiware.org.ngsi.httpmethodstransaction.Response;
 import www.fiware.org.ngsi.utilities.Constants;
 import www.fiware.org.ngsi.utilities.DevicePropertiesFunctions;
+import www.fiware.org.ngsi.utilities.Functions;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -121,17 +123,17 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
                 alert.getCategory().setValue("traffic");
                 alert.getDateObserved().setValue("2018-02-12T18:10:33.00Z");
                 alert.getDescription().setValue("Test Alert Android 1");
-                alert.getLocation().setValue("18.879691, -99.221640");
+                alert.getLocation().setValue("18.8797396, -99.2217132");
                 alert.getSeverity().setValue("informational");
                 alert.getSubCategory().setValue("UnauthorizedSpeedDetection");
-                alert.getValidFrom().setValue("2018-02-12T18:10:33.00Z");
-                alert.getValidTo().setValue("2018-02-12T18:10:33.00Z");
+                alert.getValidFrom().setValue(Functions.getActualDate());
+                alert.getValidTo().setValue(Functions.getActualDate());
                 try {
                     alertController.createEntity(context, alert.getId(), alert);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                //Toast.makeText(context, "Floating: "+date, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Floating: "+date, Toast.LENGTH_SHORT).show();
                 break;
         }
     }

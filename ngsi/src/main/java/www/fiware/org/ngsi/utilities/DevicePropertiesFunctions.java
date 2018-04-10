@@ -27,6 +27,29 @@ public class DevicePropertiesFunctions {
     public DevicePropertiesFunctions(){}
 
     /**
+     * @param context contexto donde se ejecutara el metodo.
+     * @return el identificador unico del dispositivo movil.
+     */
+    public String getDeviceId(Context context){
+        return "Device_Smartphone_"+getAndroidId(context);
+    }
+
+    public String getDeviceModelId(){
+        Functions functions = new Functions();
+        return "DeviceModel_"+functions.getReplaceParent(getBrand())+"_"+functions.getReplaceParent(getModel());
+    }
+
+    /**
+     * @param context contexto donde se ejecutara el metodo.
+     * @return el identificador unico de la alerta.
+     */
+    public String getAlertId(Context context){
+        Date currentDate = new Date();
+        Long date = currentDate.getTime() / 1000;
+        return "Alert:Device_Smartphone_"+new DevicePropertiesFunctions().getAndroidId(context)+":"+date;
+    }
+
+    /**
      * @return la versión de la API en la que fue desarrollada la aplicación.
      */
     public int getApiVersion() {
@@ -197,24 +220,6 @@ public class DevicePropertiesFunctions {
     public String getAndroidId(Context context){
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         return android_id;
-    }
-
-    /**
-     * @param context contexto donde se ejecutara el metodo.
-     * @return el identificador unico del dispositivo movil.
-     */
-    public String getDeviceId(Context context){
-        return "Device_Smartphone_"+getAndroidId(context);
-    }
-
-    /**
-     * @param context contexto donde se ejecutara el metodo.
-     * @return el identificador unico de la alerta.
-     */
-    public String getAlertId(Context context){
-        Date currentDate = new Date();
-        Long date = currentDate.getTime() / 1000;
-        return "Alert:Device_Smartphone_"+new DevicePropertiesFunctions().getAndroidId(context)+":"+date;
     }
 
     /**

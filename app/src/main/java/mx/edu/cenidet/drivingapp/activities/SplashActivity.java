@@ -53,8 +53,6 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
         fcmToken = appPreferences.getPreferenceString(getApplicationContext(),ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_FCMTOKEN);
         if (!fcmToken.equals("") || fcmToken != null){
             deviceTokenControllerSdk.createDeviceToken(fcmToken, new DevicePropertiesFunctions().getDeviceId(context));
-        }else{
-            //deviceTokenControllerSdk.updateDeviceToken(fcmToken, new DevicePropertiesFunctions().getDeviceId(context));
         }
 
         if(listCampus.size() == 0){
@@ -197,12 +195,14 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
     @Override
     public void createDeviceToken(Response response) {
         Log.i("STATUS", "Firebase Service Create: CODE: "+ response.getHttpCode());
+        Log.i("STATUS", "Firebase Service Create: BODY: "+ response.getBodyString());
         switch (response.getHttpCode()){
             case 201:
+            case 200:
                 Log.i("STATUS: ", "El token se genero exitosamente...!");
                 break;
             case 400:
-                Log.i("STATUS: ", "El token ya existe...!");
+                Log.i("STATUS: ", "Tokenk incorrecto...!");
                 break;
         }
 

@@ -25,6 +25,8 @@ import android.view.WindowManager;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
+
+import mx.edu.cenidet.cenidetsdk.utilities.ConstantSdk;
 import  mx.edu.cenidet.drivingapp.event.EventsDetect;
 
 import org.json.JSONException;
@@ -36,14 +38,22 @@ import java.util.Date;
 import java.util.HashMap;
 
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
+import www.fiware.org.ngsi.controller.DeviceController;
+import www.fiware.org.ngsi.datamodel.entity.Device;
+import www.fiware.org.ngsi.datamodel.entity.DeviceModel;
 import www.fiware.org.ngsi.datamodel.entity.DeviceSensor;
+import www.fiware.org.ngsi.datamodel.model.DeviceUpdateModel;
+import www.fiware.org.ngsi.httpmethodstransaction.Response;
+import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 import www.fiware.org.ngsi.utilities.Constants;
+import www.fiware.org.ngsi.utilities.DevicePropertiesFunctions;
+import www.fiware.org.ngsi.utilities.Functions;
 
 /**
  * Created by Cipriano on 3/3/2018.
  */
 
-public class DeviceService extends Service{
+public class DeviceService extends Service implements DeviceController.DeviceResourceMethods{
     private Context context;
     private static final String STATUS = "STATUS";
     private double longitudeGPS, latitudeGPS;
@@ -53,6 +63,15 @@ public class DeviceService extends Service{
     private LocationManager locationManager;
     //private UsersLocationService uLocationService;
     private int id;
+
+    //Modelo de datos Device, DeviceModel.
+    DeviceController deviceController;
+    private Functions functions;
+    private DevicePropertiesFunctions deviceProperties;
+    private DeviceModel deviceModel;
+    private DeviceUpdateModel deviceUpdateModel;
+    private ApplicationPreferences appPreferences;
+    private String owner;
 
     //Giroscopio y acelerometro
     private double ax, ay, az, gx, gy, gz;
@@ -71,8 +90,6 @@ public class DeviceService extends Service{
     private double speedFrom, speedTo;
     private HashMap<String, Double> hashMapSpeedFromTo;
     private HashMap<String, Double> hashMapLatLngFromTo;
-
-
 
 
     /** variables de control y configuración**/
@@ -101,6 +118,19 @@ public class DeviceService extends Service{
         //uLocationService = new UsersLocationService(context,this);
         //id = HomeActivity.ID;
         deviceSensor = new DeviceSensor();
+        functions = new Functions();
+        deviceProperties = new DevicePropertiesFunctions();
+        deviceModel = new DeviceModel();
+        deviceUpdateModel = new DeviceUpdateModel();
+        appPreferences = new ApplicationPreferences();
+        deviceController = new DeviceController(this);
+        if (appPreferences.getPreferenceString(context, ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_USER_ID) != null){
+            owner = appPreferences.getPreferenceString(context, ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_USER_ID);
+        }else{
+            owner = "undefined";
+        }
+
+
     }
 
     @Nullable
@@ -296,7 +326,7 @@ public class DeviceService extends Service{
                 Date date = new Date();
                 DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
                 if (sensorEvent.sensor.getType()== Sensor.TYPE_ACCELEROMETER){
-                    int id = sensorEvent.sensor.getId();
+                    //int id = sensorEvent.sensor.getId();
                     String name = sensorEvent.sensor.getName();
                     int type = sensorEvent.sensor.getType();
                     String typeString = sensorEvent.sensor.getStringType();
@@ -338,7 +368,7 @@ public class DeviceService extends Service{
                     //Log.i("ACCELEROMETER", "AX "+ax+" AY "+ay+" AZ "+az +" -time: "+current_time+" -Id: "+id+ " -name: "+name+" -type: "+type+" -typeString: "+typeString+" -vendor: "+vendor+" -versión: "+version+" -power: "+power);
 
                 }else if(sensorEvent.sensor.getType()==Sensor.TYPE_GYROSCOPE){
-                    int id = sensorEvent.sensor.getId();
+                    //int id = sensorEvent.sensor.getId();
                     String name = sensorEvent.sensor.getName();
                     int type = sensorEvent.sensor.getType();
                     String typeString = sensorEvent.sensor.getStringType();
@@ -454,6 +484,9 @@ public class DeviceService extends Service{
                 Intent intent = new Intent(Constants.SERVICE_CHANGE_LOCATION_DEVICE).putExtra(Constants.SERVICE_RESULT_LATITUDE, latitudeGPS)
                         .putExtra(Constants.SERVICE_RESULT_LONGITUDE, longitudeGPS).putExtra(Constants.SERVICE_RESULT_SPEED_MS, speedMS).putExtra(Constants.SERVICE_RESULT_SPEED_KMHR, speedKmHr);
                 LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(intent);
+
+                //Envía el Modelo de datos Device
+
 
                 Log.i(STATUS, "GPS LATITUDE: " + latitudeGPS + " longitude: " + longitudeGPS);
                 //Logica para obtener location apartir de (location anterior) y location hasta (location actual)
@@ -616,4 +649,66 @@ public class DeviceService extends Service{
 
     }
 
+    public Device createDevice(Double latitude, Double longitude){
+        String actualDate = functions.getActualDate();
+
+        Device device = new Device();
+        device.setId(deviceProperties.getDeviceId(context));
+        device.getCategory().setValue("smartphone");
+        device.getOsVersion().setValue(deviceProperties.getOSVersion());
+        device.getBatteryLevel().setValue(deviceProperties.getBatteryLevel(context));
+        device.getDateCreated().setValue(actualDate);
+        device.getDateModified().setValue(actualDate);
+        device.getIpAddress().setValue(deviceProperties.getIPAddress(true));
+        device.getRefDeviceModel().setValue(deviceProperties.getDeviceModelId());
+        device.getSerialNumber().setValue(deviceProperties.getSerialNumber());
+        device.getOwner().setValue(owner);
+        return device;
+    }
+
+    public DeviceUpdateModel updateDevice(Double latitude, Double longitude){
+        String actualDate = functions.getActualDate();
+
+        DeviceUpdateModel deviceUpdateModel = new DeviceUpdateModel();
+        deviceUpdateModel.getCategory().setValue("smartphone");
+        deviceUpdateModel.getOsVersion().setValue(deviceProperties.getOSVersion());
+        deviceUpdateModel.getBatteryLevel().setValue(deviceProperties.getBatteryLevel(context));
+        deviceUpdateModel.getDateModified().setValue(""+actualDate);
+        deviceUpdateModel.getIpAddress().setValue(deviceProperties.getIPAddress(true));
+        deviceUpdateModel.getRefDeviceModel().setValue(deviceProperties.getDeviceModelId());
+        deviceUpdateModel.getSerialNumber().setValue(deviceProperties.getSerialNumber());
+        deviceUpdateModel.getOwner().setValue(owner);
+        deviceUpdateModel.getLocation().setValue(latitudeGPS + ", " + longitudeGPS);
+        return  deviceUpdateModel;
+    }
+
+    @Override
+    public void onCreateEntity(Response response) {
+
+    }
+
+    @Override
+    public void onCreateEntitySaveOffline(Response response) {
+
+    }
+
+    @Override
+    public void onUpdateEntity(Response response) {
+
+    }
+
+    @Override
+    public void onUpdateEntitySaveOffline(Response response) {
+
+    }
+
+    @Override
+    public void onDeleteEntity(Response response) {
+
+    }
+
+    @Override
+    public void onGetEntities(Response response) {
+
+    }
 }

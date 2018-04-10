@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import static android.R.attr.path;
@@ -46,6 +47,12 @@ import static android.R.attr.path;
  */
 public class Functions {
 
+    public static String getActualDate(){
+        Date date = new Date();
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+        String strUTCDate = isoFormat.format(date);
+        return strUTCDate;
+    }
     /**
      * @return retorna la hora y fecha del sistema en un String.
      */
