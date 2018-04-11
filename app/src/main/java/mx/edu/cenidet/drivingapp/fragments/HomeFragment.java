@@ -16,14 +16,13 @@ import android.widget.Toast;
 
 import java.util.Date;
 
-import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import mx.edu.cenidet.drivingapp.services.SendDataService;
 import www.fiware.org.ngsi.controller.AlertController;
 import www.fiware.org.ngsi.datamodel.entity.Alert;
+import www.fiware.org.ngsi.datamodel.entity.Zone;
 import www.fiware.org.ngsi.httpmethodstransaction.Response;
-import www.fiware.org.ngsi.utilities.Constants;
 import www.fiware.org.ngsi.utilities.DevicePropertiesFunctions;
 import www.fiware.org.ngsi.utilities.Functions;
 
@@ -79,17 +78,14 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
     }
 
     @Override
-    public void detectCampus(Campus campus, boolean statusLocation) {
+    public void detectZone(Zone zone, boolean statusLocation) {
         if(statusLocation == true){
             //Log.i("STATUS: ","Campus Name: "+campus.getName()+" statusLocation: "+statusLocation);
             if(imagenViewDetailCampus != null && tvDetailCampus != null){
                 imagenViewDetailCampus.setImageResource(R.drawable.inside);
-                tvDetailCampus.setText(context.getString(R.string.message_name_campus)+": "+campus.getName()+"\n"+context.getString(R.string.message_address_campus)+": "+campus.getAddress());
+                tvDetailCampus.setText(context.getString(R.string.message_name_campus)+": "+zone.getName().getValue()+"\n"+context.getString(R.string.message_address_campus)+": "+zone.getAddress().getValue());
             }
         }else{
-            //imagenViewDetailCampus.setImageResource(R.drawable.outside);
-            //tvDetailCampus.setText(context.getString(R.string.message_name_campus));
-
             Log.i("STATUS 1: ","DetectCampus...!"+ statusLocation);
             if(imagenViewDetailCampus != null && tvDetailCampus != null){
                 imagenViewDetailCampus.setImageResource(R.drawable.outside);
@@ -122,9 +118,10 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
                 alert.getAlertSource().setValue(new DevicePropertiesFunctions().getDeviceId(context));
                 alert.getCategory().setValue("traffic");
                 alert.getDateObserved().setValue(Functions.getActualDate());
-                alert.getDescription().setValue("Test Alert Android 1");
+                alert.getDescription().setValue("Se detecto un exceso de velocidad");
                 alert.getLocation().setValue("18.8797396, -99.2217132");
-                alert.getSeverity().setValue("medium");
+                alert.getSeverity().setValue("critical");
+                //alert.getSeverity().setValue("medium");
                 alert.getSubCategory().setValue("UnauthorizedSpeedDetection");
                 alert.getValidFrom().setValue(Functions.getActualDate());
                 alert.getValidTo().setValue(Functions.getActualDate());

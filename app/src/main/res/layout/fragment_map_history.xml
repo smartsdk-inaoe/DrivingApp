@@ -2,13 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mx.edu.cenidet.drivingapp.fragments.CampusFragment">
+    tools:context="mx.edu.cenidet.drivingapp.fragments.MapHistoryFragment">
 
     <com.google.android.gms.maps.MapView
-        android:id="@+id/mapCampus"
+        android:id="@+id/map"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <include android:id="@+id/btnFloating" layout="@layout/floating_button"/>
 </FrameLayout>

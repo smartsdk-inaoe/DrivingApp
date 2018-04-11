@@ -23,7 +23,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +34,7 @@ import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import mx.edu.cenidet.drivingapp.services.SendDataService;
+import www.fiware.org.ngsi.datamodel.entity.Zone;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,7 +47,7 @@ public class MyLocationFragment extends Fragment implements OnMapReadyCallback, 
     private CameraPosition camera;
     private static final String STATUS = "Status";
     private Context context;
-    private ArrayList<Campus> listCampus;
+    private ArrayList<Zone> listZone;
     private SQLiteDrivingApp sqLiteDrivingApp;
     private ArrayList<LatLng> listLocation;
     private ArrayList<LatLng> listPolyline;
@@ -88,18 +88,18 @@ public class MyLocationFragment extends Fragment implements OnMapReadyCallback, 
             return;
         }
 
-        listCampus = sqLiteDrivingApp.getAllCampus();
-        if(listCampus.size() == 0){
+        listZone = sqLiteDrivingApp.getAllZone();
+        if(listZone.size() == 0){
 
         }else{
             JSONArray arrayLocation;
             String originalString, clearString;
             double latitude, longitude;
             String[] subString;
-            for(int i=0; i<listCampus.size(); i++){
+            for(int i=0; i<listZone.size(); i++){
                 listLocation = new ArrayList<>();
                 try {
-                    arrayLocation = new JSONArray(listCampus.get(i).getLocation());
+                    arrayLocation = new JSONArray(listZone.get(i).getLocation().getValue());
                     for (int j=0; j<arrayLocation.length(); j++){
                         originalString = arrayLocation.get(j).toString();
                         clearString = originalString.substring(originalString.indexOf("[") + 1, originalString.indexOf("]"));
@@ -165,7 +165,7 @@ public class MyLocationFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     @Override
-    public void detectCampus(Campus campus, boolean statusLocation) {
+    public void detectZone(Zone zone, boolean statusLocation) {
 
     }
 

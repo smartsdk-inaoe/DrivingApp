@@ -22,16 +22,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import mx.edu.cenidet.cenidetsdk.controllers.AlertsControllerSdk;
-import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.cenidetsdk.httpmethods.Response;
+import mx.edu.cenidet.cenidetsdk.utilities.ConstantSdk;
 import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.activities.AlertMapDetailActivity;
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import mx.edu.cenidet.drivingapp.adapters.MyAdapterAlerts;
 import www.fiware.org.ngsi.datamodel.entity.Alert;
+import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,11 +44,14 @@ public class AlertsFragment extends Fragment implements AlertsControllerSdk.Aler
     private ArrayList<Alert> listAlerts;
     private MyAdapterAlerts myAdapterAlerts;
     private AdapterView.AdapterContextMenuInfo info;
-    private String category, description, location;
+    private String category, description, location, severity;
+    private ApplicationPreferences applicationPreferences;
+    private String zoneId;
 
     public AlertsFragment() {
         context = HomeActivity.MAIN_CONTEXT;
         alertsControllerSdk = new AlertsControllerSdk(context, this);
+        applicationPreferences = new ApplicationPreferences();
     }
 
 
@@ -57,7 +60,14 @@ public class AlertsFragment extends Fragment implements AlertsControllerSdk.Aler
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_alerts, container, false);
         //alertsControllerSdk.readAlertsByCampus();
-        alertsControllerSdk.currentAlertByCampus("Zone_1523325691338");
+        if(applicationPreferences.getPreferenceString(context, ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_CURRENT_ZONE) != null){
+            zoneId = applicationPreferences.getPreferenceString(context, ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_CURRENT_ZONE);
+            if(zoneId.equals("undetectedZone")){
+                Toast.makeText(context, R.string.message_undetected_zone, Toast.LENGTH_SHORT).show();
+            }else {
+                alertsControllerSdk.currentAlertByZone(zoneId);
+            }
+        }
         listAlerts = new ArrayList<Alert>();
         return rootView;
     }
@@ -70,57 +80,53 @@ public class AlertsFragment extends Fragment implements AlertsControllerSdk.Aler
     }
 
     @Override
-    public void readAlertsByCampus(Response response) {
-        Log.i("Status: ", "Code Alerts: "+response.getHttpCode());
-        switch (response.getHttpCode()){
-            case 200:
-                break;
-        }
-
-    }
-
-    @Override
-    public void currentAlertByCampus(Response response) {
+    public void currentAlertByZone(Response response) {
         Log.i("Test: ", "Code Alerts: "+response.getHttpCode());
         switch (response.getHttpCode()){
             case 200:
                 Log.i("Test: ", "Body: "+response.getBodyString());
                 Alert alert;
-                /*JSONObject jsonObject = response.parseJsonObject(response.getBodyString());
-                if(jsonObject.length() == 0 || jsonObject.toString().equals("{}")){
-                    Log.i("Test: ", "Vacio...!: "+response.getBodyString());
-                }else{*/
                     Log.i("Test: ", "Obtiene Datos...!: "+response.getBodyString());
                     JSONArray jsonArray = response.parseJsonArray(response.getBodyString());
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        try {
-                            alert = new Alert();
-                            JSONObject object = jsonArray.getJSONObject(i);
-                            alert.setId(object.getString("id"));
-                            alert.setType(object.getString("type"));
-                            alert.getAlertSource().setValue(object.getString("alertSource"));
-                            alert.getCategory().setValue(object.getString("category"));
-                            alert.getDateObserved().setValue(object.getString("dateObserved"));
-                            alert.getDescription().setValue(object.getString("description"));
-                            alert.getLocation().setValue(object.getString("location"));
-                            alert.getSeverity().setValue(object.getString("severity"));
-                            alert.getSubCategory().setValue(object.getString("subCategory"));
-                            alert.getValidFrom().setValue(object.getString("validFrom"));
-                            alert.getValidTo().setValue(object.getString("validTo"));
-                            listAlerts.add(alert);
-                        }catch (JSONException e){
-                            e.printStackTrace();
-                        }
+                    if(jsonArray.length() == 0 || jsonArray == null){
+                        Toast.makeText(context, R.string.message_no_alerts_show, Toast.LENGTH_SHORT).show();
+                    }else{
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            try {
+                                alert = new Alert();
+                                JSONObject object = jsonArray.getJSONObject(i);
+                                alert.setId(object.getString("id"));
+                                alert.setType(object.getString("type"));
+                                alert.getAlertSource().setValue(object.getString("alertSource"));
+                                alert.getCategory().setValue(object.getString("category"));
+                                alert.getDateObserved().setValue(object.getString("dateObserved"));
+                                alert.getDescription().setValue(object.getString("description"));
+                                alert.getLocation().setValue(object.getString("location"));
+                                alert.getSeverity().setValue(object.getString("severity"));
+                                alert.getSubCategory().setValue(object.getString("subCategory"));
+                                alert.getValidFrom().setValue(object.getString("validFrom"));
+                                alert.getValidTo().setValue(object.getString("validTo"));
+                                listAlerts.add(alert);
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
 
-                        if(listAlerts.size() > 0){
-                            myAdapterAlerts = new MyAdapterAlerts(context, R.id.listViewAlerts, listAlerts);
-                            listViewAlerts.setAdapter(myAdapterAlerts);
+                            if(listAlerts.size() > 0){
+                                myAdapterAlerts = new MyAdapterAlerts(context, R.id.listViewAlerts, listAlerts);
+                                listViewAlerts.setAdapter(myAdapterAlerts);
+                            }
                         }
                     }
-                //}
-
+                break;
+            case 503:
+                Log.i("STATUS", "Cuando la clave de la zona no es correcta...!");
                 break;
         }
+    }
+
+    @Override
+    public void historyAlertByZone(Response response) {
+
     }
 
     @Override
@@ -142,10 +148,12 @@ public class AlertsFragment extends Fragment implements AlertsControllerSdk.Aler
                 category = listAlerts.get(info.position).getCategory().getValue();
                 description = listAlerts.get(info.position).getDescription().getValue();
                 location = listAlerts.get(info.position).getLocation().getValue();
+                severity = listAlerts.get(info.position).getSeverity().getValue();
                 Intent intent = new Intent(context, AlertMapDetailActivity.class);
                 intent.putExtra("category", category);
                 intent.putExtra("description", description);
                 intent.putExtra("location", location);
+                intent.putExtra("severity", severity);
                 startActivity(intent);
                 return true;
         }

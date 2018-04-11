@@ -5,10 +5,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import mx.edu.cenidet.drivingapp.fragments.AlertsFragment;
-import mx.edu.cenidet.drivingapp.fragments.CampusFragment;
+import mx.edu.cenidet.drivingapp.fragments.ZoneFragment;
 import mx.edu.cenidet.drivingapp.fragments.HomeFragment;
 import mx.edu.cenidet.drivingapp.fragments.MyCampusFragment;
-import mx.edu.cenidet.drivingapp.fragments.MyLocationFragment;
 import mx.edu.cenidet.drivingapp.fragments.SpeedFragment;
 
 /**
@@ -30,7 +29,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return new SpeedFragment();
             case 2:
-                return new CampusFragment();
+                return new ZoneFragment();
             case 3:
                 return new AlertsFragment();
             case 4:

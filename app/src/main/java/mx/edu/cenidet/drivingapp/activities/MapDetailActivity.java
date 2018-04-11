@@ -98,7 +98,7 @@ public class MapDetailActivity extends AppCompatActivity implements OnMapReadyCa
     private void zoomToLocation(double latitude, double longitude){
         camera = new CameraPosition.Builder()
                 .target(new LatLng(latitude, longitude))
-                .zoom(15)       //limit -> 21
+                .zoom(18)       //limit -> 21
                 .bearing(0)    //orientación de la camara hacia el este 0°-365°
                 .tilt(30)       //efecto 3D 0-90
                 .build();

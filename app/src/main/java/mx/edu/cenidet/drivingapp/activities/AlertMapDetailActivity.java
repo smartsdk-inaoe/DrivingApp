@@ -22,7 +22,7 @@ public class AlertMapDetailActivity extends AppCompatActivity implements OnMapRe
     private GoogleMap gMap;
     private Marker marker;
     private CameraPosition camera;
-    private String category, description, location;
+    private String category, description, location, severity;
     private double pointLatitude, pointLongitude;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +32,11 @@ public class AlertMapDetailActivity extends AppCompatActivity implements OnMapRe
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.alert_map_detail);
         mapFragment.getMapAsync(this);
-        if(getIntent().getStringExtra("category") != null && getIntent().getStringExtra("description") != null && getIntent().getStringExtra("location") != null){
+        if(getIntent().getStringExtra("category") != null && getIntent().getStringExtra("description") != null && getIntent().getStringExtra("location") != null && getIntent().getStringExtra("severity") != null){
             category = getIntent().getStringExtra("category");
             description = getIntent().getStringExtra("description");
             location = getIntent().getStringExtra("location");
+            severity = getIntent().getStringExtra("severity");
 
             String[] subString;
             subString =  location.split(",");
@@ -61,7 +62,23 @@ public class AlertMapDetailActivity extends AppCompatActivity implements OnMapRe
         if(marker == null){
            // marker = gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(category+"\n"+description));
             //marker = gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(category).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_alerts_menu)).anchor((float) 0.5, (float) 0.5).rotation((float) 90.0));
-            marker = gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(category).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_alert_critical)));
+            switch (severity){
+                case "informational":
+                    marker = gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(category).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_alert_informational)));
+                    break;
+                case "low":
+                    marker = gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(category).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_alert_low)));
+                    break;
+                case "medium":
+                    marker = gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(category).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_alert_medium)));
+                    break;
+                case "high":
+                    marker = gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(category).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_alert_high)));
+                    break;
+                case "critical":
+                    marker = gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(category).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_alert_critical)));
+                    break;
+            }
             //marker = gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(name));
             zoomToLocation(latitude, longitude);
         }else{

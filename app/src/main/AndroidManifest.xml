@@ -46,7 +46,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activities.AlertMapDetailActivity"></activity>
+        <activity android:name=".activities.AlertMapDetailActivity" />
+        <activity android:name=".activities.AlertHistoryActivity"></activity>
     </application>
 
 </manifest>

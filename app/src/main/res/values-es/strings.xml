@@ -16,13 +16,14 @@
     <!--Drawer and Tabs-->
     <string name="menu_home">Inicio</string>
     <string name="menu_speed">Mi velocidad</string>
-    <string name="menu_campus_map">Mapa del campus</string>
+    <string name="menu_campus_map">Mapa de zonas</string>
     <string name="menu_alerts">Mis alertas</string>
-    <string name="menu_my_campus">Mis campus</string>
+    <string name="menu_my_campus">Mis zonas</string>
     <string name="menu_my_location">Mi localización</string>
     <string name="menu_profile">Mi perfil</string>
     <string name="menu_settings">Configuración</string>
     <string name="menu_logout">Cerrar sesión</string>
+    <string name="menu_history">Historial de alertas</string>
 
 
     <!--Messages-->
@@ -30,6 +31,8 @@
     <string name="message_valid_password">La contraseña no es valida, intente de nuevo.</string>
     <string name="message_user_not_found">Email o contraseña incorrectas, intentelo de nuevo.</string>
     <string name="message_login_not_found">Error al iniciar sesión.</string>
+    <string name="message_undetected_zone">No te encuentras en ninguna zona....!</string>
+    <string name="message_no_alerts_show">Esta zona no tiene alertas para mostrar...!</string>
 
     <!--Dialog alerts-->
     <string name="message_alert_gps">El GPS está desactivado en el dispositivo. ¿Quieres habilitarlo?</string>

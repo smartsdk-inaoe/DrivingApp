@@ -21,6 +21,7 @@ import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import mx.edu.cenidet.drivingapp.services.SendDataService;
+import www.fiware.org.ngsi.datamodel.entity.Zone;
 import www.fiware.org.ngsi.utilities.Constants;
 
 /**
@@ -72,7 +73,7 @@ public class SpeedFragment extends Fragment implements SendDataService.SendDataM
     }
 
     @Override
-    public void detectCampus(Campus campus, boolean statusLocation) {
+    public void detectZone(Zone zone, boolean statusLocation) {
 
     }
 

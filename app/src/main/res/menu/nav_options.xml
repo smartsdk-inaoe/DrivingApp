@@ -21,6 +21,12 @@
             android:title="@string/menu_my_location"/-->
     </group>
 
+    <group android:id="@+id/menu_center" android:checkableBehavior="single">
+        <item android:id="@+id/menu_history"
+            android:icon="@drawable/ic_alerts_menu"
+            android:title="@string/menu_history"/>
+    </group>
+
     <group android:id="@+id/menu_bottom" android:checkableBehavior="none">
         <item android:id="@+id/menu_profile"
             android:icon="@drawable/ic_profile_menu"

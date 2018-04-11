@@ -30,11 +30,9 @@ import www.fiware.org.ngsi.datamodel.entity.Zone;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 import www.fiware.org.ngsi.utilities.DevicePropertiesFunctions;
 
-public class SplashActivity extends AppCompatActivity implements CampusController.CampusServiceMethods, DeviceTokenControllerSdk.DeviceTokenServiceMethods, ZoneControllerSdk.ZoneServiceMethods {
+public class SplashActivity extends AppCompatActivity implements DeviceTokenControllerSdk.DeviceTokenServiceMethods, ZoneControllerSdk.ZoneServiceMethods {
     private Intent mIntent;
-    private CampusController campusController;
     private SQLiteDrivingApp sqLiteDrivingApp;
-    private ArrayList<Campus> listCampus;
     private ArrayList<Zone> listZone;
     private ZoneControllerSdk zoneControllerSdk;
 
@@ -48,9 +46,7 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
         super.onCreate(savedInstanceState);
         context = this;
         sqLiteDrivingApp = new SQLiteDrivingApp(this);
-        campusController = new CampusController(getApplicationContext(), this);
         zoneControllerSdk = new ZoneControllerSdk(context, this);
-        listCampus = sqLiteDrivingApp.getAllCampus();
         listZone = sqLiteDrivingApp.getAllZone();
 
         //objeto que utilizaremos para llamar a los metodos de la gestion del token de firebase
@@ -62,42 +58,6 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
         }
         if(listZone.size()== 0){
             zoneControllerSdk.readAllZone();
-        }
-
-        if(listCampus.size() == 0){
-            campusController.readCampus();
-        }else{
-            /*//Probando la lista de campus para mostrar en consola.
-            JSONArray arrayLocation;
-            String originalString, clearString;
-            double latitude, longitude;
-            String[] subString;
-            for(int i=0; i<listCampus.size(); i++){
-                Log.i("Status: ", "ID: "+listCampus.get(i).getId());
-                Log.i("Status: ", "type: "+listCampus.get(i).getType());
-                Log.i("Status: ", "name: "+listCampus.get(i).getName());
-                Log.i("Status: ", "address: "+listCampus.get(i).getAddress());
-                Log.i("Status: ", "location: "+listCampus.get(i).getLocation());
-                try {
-                    arrayLocation = new JSONArray(listCampus.get(i).getLocation());
-                    for (int j=0; j<arrayLocation.length(); j++){
-                        Log.i("Status: ", "location: "+j+" "+arrayLocation.get(j).toString());
-                        originalString = arrayLocation.get(j).toString();
-                        clearString = originalString.substring(originalString.indexOf("[") + 1, originalString.indexOf("]"));
-                        //Log.i("Status: ", "clearString: "+clearString);
-                        subString =  clearString.split(",");
-                        latitude = Double.parseDouble(subString[0]);
-                        longitude = Double.parseDouble(subString[1]);
-                        Log.i("Status: ", "Latitude: "+latitude+ " Longitude: "+longitude);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.i("Status: ", "pointMap: "+listCampus.get(i).getPointMap());
-                Log.i("Status: ", "Create: "+listCampus.get(i).getDateCreated());
-                Log.i("Status: ", "Modified: "+listCampus.get(i).getDateModified());
-            }*/
-            Log.i("Status ", "Lista con datos");
         }
 
         if(isEnableGPS()){
@@ -154,51 +114,6 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
                         });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
-    }
-
-    @Override
-    public void readCampus(Response response) {
-        //Log.i("Status: ", "Code: "+response.getHttpCode());
-        //Log.i("Status: ", "BODY: "+response.getBodyString());
-        switch (response.getHttpCode()){
-            case 200:
-                Campus campus;
-                JSONArray jsonArray = response.parseJsonArray(response.getBodyString());
-                //Log.i("Status: ", "----------");
-                //Log.i("Status: ", "BODY Array: "+jsonArray);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    try {
-                        campus = new Campus();
-                        JSONObject object = jsonArray.getJSONObject(i);
-                        campus.setId(object.getString("_id"));
-                        campus.setType(object.getString("type"));
-                        campus.setName(object.getString("name"));
-                        campus.setAddress(object.getString("address"));
-                        campus.setLocation(""+object.getJSONArray("location"));
-                        campus.setPointMap(""+object.getJSONArray("pointMap"));
-                        campus.setDateCreated(object.getString("dateCreated"));
-                        campus.setDateModified(object.getString("dateModified"));
-                        /*Log.i("Status: ", "ID: "+campus.getId());
-                        Log.i("Status: ", "type: "+campus.getType());
-                        Log.i("Status: ", "name: "+campus.getName());
-                        Log.i("Status: ", "address: "+campus.getAddress());
-                        Log.i("Status: ", "location: "+campus.getLocation());
-                        Log.i("Status: ", "pointMap: "+campus.getPointMap());
-                        Log.i("Status: ", "Create: "+campus.getDateCreated());
-                        Log.i("Status: ", "Modified: "+campus.getDateModified());*/
-                        if(sqLiteDrivingApp.createCampus(campus) == true){
-                            Log.i("Status: ", "Dato insertado correctamente...!");
-                        }else{
-                            Log.i("Status: ", "Error al insertar...!");
-                        }
-                        Log.i("--------: ", "--------------------------------------");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                break;
-        }
     }
 
     @Override

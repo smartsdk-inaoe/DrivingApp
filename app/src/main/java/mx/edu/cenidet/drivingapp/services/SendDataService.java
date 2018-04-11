@@ -20,8 +20,11 @@ import java.util.ArrayList;
 
 import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
+import mx.edu.cenidet.cenidetsdk.utilities.ConstantSdk;
 import mx.edu.cenidet.drivingapp.fragments.HomeFragment;
 import www.fiware.org.ngsi.datamodel.entity.DeviceSensor;
+import www.fiware.org.ngsi.datamodel.entity.Zone;
+import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 import www.fiware.org.ngsi.utilities.Constants;
 
 /**
@@ -35,11 +38,14 @@ public class SendDataService {
     private double speedMS, speedKmHr;
     private IntentFilter filter;
     //Dectar Campus
-    private ArrayList<Campus> listCampus;
+    //private ArrayList<Campus> listCampus;
+    private ArrayList<Zone> listZone;
     private ArrayList<LatLng> listLocation;
     private SQLiteDrivingApp sqLiteDrivingApp;
-    private Campus campus = null, auxCampus = null;
+    //private Campus campus = null, auxCampus = null;
+    private Zone zone = null, auxZone = null;
     private boolean auxStatusLocation = false;
+    private ApplicationPreferences applicationPreferences;
 
     public SendDataService(Context context, SendDataService.SendDataMethods sendDataMethods){
         this.context = context;
@@ -50,17 +56,17 @@ public class SendDataService {
         ResponseReceiver receiver = new ResponseReceiver();
         // Registrar el receiver y su filtro
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, filter);
-
+        applicationPreferences = new ApplicationPreferences();
         //Detectar Campus
         sqLiteDrivingApp = new SQLiteDrivingApp(context);
-        listCampus =  sqLiteDrivingApp.getAllCampus();
+        listZone =  sqLiteDrivingApp.getAllZone();
         //campus = new Campus();
     }
 
 
     public interface SendDataMethods{
         void sendLocationSpeed(double latitude, double longitude, double speedMS, double speedKmHr);
-        void detectCampus(Campus campus, boolean statusLocation);
+        void detectZone(Zone zone, boolean statusLocation);
         void sendDataAccelerometer(double ax, double ay, double az);
         void sendEvent(String event);
     }
@@ -77,61 +83,8 @@ public class SendDataService {
                     speedMS = intent.getDoubleExtra(Constants.SERVICE_RESULT_SPEED_MS, 0);
                     speedKmHr = intent.getDoubleExtra(Constants.SERVICE_RESULT_SPEED_KMHR, 0);
                     sendDataMethods.sendLocationSpeed(latitude, longitude, speedMS, speedKmHr);
-                    //Detecta Campus
-                    if(listCampus.size() > 0){
-                        JSONArray arrayLocation;
-                        String originalString, clearString;
-                        double latitudePolygon, longitudePolygon;
-                        String[] subString;
-                        boolean statusLocation;
-                        auxCampus = null;
-                        auxStatusLocation = false;
-                        for(int i=0; i<listCampus.size(); i++){
-                            listLocation = new ArrayList<>();
-                            campus = new Campus();
-                            campus.setId(listCampus.get(i).getId());
-                            campus.setType(listCampus.get(i).getType());
-                            campus.setName(listCampus.get(i).getName());
-                            campus.setAddress(listCampus.get(i).getAddress());
-                            campus.setLocation(listCampus.get(i).getLocation());
-                            campus.setPointMap(listCampus.get(i).getPointMap());
-                            campus.setDateCreated(listCampus.get(i).getDateCreated());
-                            campus.setDateModified(listCampus.get(i).getDateModified());
-                            campus.setStatus(listCampus.get(i).getStatus());
-
-                            //Log.i("Status: ", "Campus name: "+listCampus.get(i).getName());
-                            try{
-                                arrayLocation = new JSONArray(listCampus.get(i).getLocation());
-                                for (int j=0; j<arrayLocation.length(); j++){
-                                    originalString = arrayLocation.get(j).toString();
-                                    clearString = originalString.substring(originalString.indexOf("[") + 1, originalString.indexOf("]"));
-                                    subString =  clearString.split(",");
-                                    latitudePolygon = Double.parseDouble(subString[0]);
-                                    longitudePolygon = Double.parseDouble(subString[1]);
-                                    listLocation.add(new LatLng(latitudePolygon,longitudePolygon));
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            statusLocation = PolyUtil.containsLocation(new LatLng(latitude,longitude), listLocation, false);
-                            //statusLocation = PolyUtil.containsLocation(new LatLng(18.870032,-99.211869), listLocation, false);
-                            if(statusLocation == true){
-                                auxCampus = campus;
-                                auxStatusLocation = statusLocation;
-                            }
-                        }
-                        //Logica para enviar el si se encuentra dentro del campus...
-                        if(auxCampus == null && auxStatusLocation == false){
-                            sendDataMethods.detectCampus(auxCampus, auxStatusLocation);
-                        }else{
-                            sendDataMethods.detectCampus(auxCampus, auxStatusLocation);
-                        }
-
-                    }else{
-                        //Log.i("STATUS: ","Carga los campus en el primer inicio de sesión");
-                        listCampus =  sqLiteDrivingApp.getAllCampus();
-
-                    }
+                    //Detecta Zona
+                    detectZone();
                     Log.i("STATUS 1", "VIEW Latitude: "+latitude+" Longitude: "+longitude+" Velocidad: "+speedMS+"m/s  Velocidad: "+speedKmHr+"km/hr");
                     break;
                 case Constants.SERVICE_RUNNING_SENSORS:
@@ -155,6 +108,69 @@ public class SendDataService {
                         }
                     break;
             }
+        }
+    }
+
+    private void detectZone(){
+        if(listZone.size() > 0){
+            JSONArray arrayLocation;
+            String originalString, clearString;
+            double latitudePolygon, longitudePolygon;
+            String[] subString;
+            boolean statusLocation;
+            auxZone = null;
+            auxStatusLocation = false;
+            for(int i=0; i<listZone.size(); i++){
+                listLocation = new ArrayList<>();
+                zone = new Zone();
+                zone.setIdZone(listZone.get(i).getIdZone());
+                zone.setType(listZone.get(i).getType());
+                zone.setRefBuildingType(listZone.get(i).getRefBuildingType());
+                zone.setName(listZone.get(i).getName());
+                zone.setAddress(listZone.get(i).getAddress());
+                zone.setCategory(listZone.get(i).getCategory());
+                zone.setLocation(listZone.get(i).getLocation());
+                zone.setCenterPoint(listZone.get(i).getCenterPoint());
+                zone.setDescription(listZone.get(i).getDescription());
+                zone.setDateCreated(listZone.get(i).getDateCreated());
+                zone.setDateModified(listZone.get(i).getDateModified());
+                zone.setStatus(listZone.get(i).getStatus());
+                //Log.i("Status: ", "Campus name: "+listCampus.get(i).getName());
+                try{
+                    arrayLocation = new JSONArray(listZone.get(i).getLocation().getValue());
+                    for (int j=0; j<arrayLocation.length(); j++){
+                        originalString = arrayLocation.get(j).toString();
+                        clearString = originalString.substring(originalString.indexOf("[") + 1, originalString.indexOf("]"));
+                        subString =  clearString.split(",");
+                        latitudePolygon = Double.parseDouble(subString[0]);
+                        longitudePolygon = Double.parseDouble(subString[1]);
+                        listLocation.add(new LatLng(latitudePolygon,longitudePolygon));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                statusLocation = PolyUtil.containsLocation(new LatLng(latitude,longitude), listLocation, false);
+                //statusLocation = PolyUtil.containsLocation(new LatLng(18.870032,-99.211869), listLocation, false);
+                if(statusLocation == true){
+                    auxZone = zone;
+                    auxStatusLocation = statusLocation;
+                }
+            }
+            //Logica para enviar el si se encuentra dentro del campus...
+            if(auxZone == null && auxStatusLocation == false){
+                sendDataMethods.detectZone(auxZone, auxStatusLocation);
+                applicationPreferences.saveOnPreferenceString(context, ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_CURRENT_ZONE, "undetectedZone");
+                Log.i("CAMPUS: ","EXAMPLE 1......!"+applicationPreferences.getPreferenceString(context, ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_CURRENT_ZONE));
+            }else{
+                sendDataMethods.detectZone(auxZone, auxStatusLocation);
+                applicationPreferences.saveOnPreferenceString(context, ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_CURRENT_ZONE, auxZone.getIdZone());
+                Log.i("CAMPUS: ","EXAMPLE 2......!"+applicationPreferences.getPreferenceString(context, ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_CURRENT_ZONE));
+            }
+
+        }else{
+            //Log.i("STATUS: ","Carga los campus en el primer inicio de sesión");
+            listZone =  sqLiteDrivingApp.getAllZone();
+
         }
     }
 }

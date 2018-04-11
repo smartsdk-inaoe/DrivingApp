@@ -41,7 +41,8 @@ public enum  ConfigServer {
     http_login("login"),
 
     //-----Alerts------
-    http_current("/alerts/zone/current");
+    http_current("/alerts/zone/current"),
+    http_history("/alerts/zone/history");
 
 
     private String propiedad;

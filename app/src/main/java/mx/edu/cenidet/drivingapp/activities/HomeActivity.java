@@ -1,17 +1,12 @@
 package mx.edu.cenidet.drivingapp.activities;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.location.LocationManager;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -19,43 +14,22 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import mx.edu.cenidet.cenidetsdk.controllers.DeviceTokenControllerSdk;
-import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
-import mx.edu.cenidet.cenidetsdk.entities.Campus;
-import mx.edu.cenidet.cenidetsdk.httpmethods.Response;
 import mx.edu.cenidet.cenidetsdk.utilities.ConstantSdk;
 import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.adapters.PagerAdapter;
-import mx.edu.cenidet.drivingapp.fragments.AlertsFragment;
-import mx.edu.cenidet.drivingapp.fragments.CampusFragment;
 import mx.edu.cenidet.drivingapp.fragments.HomeFragment;
-import mx.edu.cenidet.drivingapp.fragments.MyLocationFragment;
-import mx.edu.cenidet.drivingapp.fragments.SpeedFragment;
 import mx.edu.cenidet.drivingapp.services.DeviceService;
-import mx.edu.cenidet.drivingapp.services.SendDataService;
 import www.fiware.org.ngsi.datamodel.entity.Zone;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
-import www.fiware.org.ngsi.utilities.Constants;
-import www.fiware.org.ngsi.utilities.Functions;
 import www.fiware.org.ngsi.utilities.Tools;
 
 public class HomeActivity extends AppCompatActivity{
@@ -149,7 +123,7 @@ public class HomeActivity extends AppCompatActivity{
                         fratmentTransaction = true;
                         break;
                     case R.id.menu_campus:
-                        //fragment = new CampusFragment();
+                        //fragment = new ZoneFragment();
                         viewPager.setCurrentItem(2);
                         fratmentTransaction = true;
                         break;
@@ -167,6 +141,11 @@ public class HomeActivity extends AppCompatActivity{
                         viewPager.setCurrentItem(5);
                         fratmentTransaction = true;
                         break;*/
+                    case R.id.menu_history:
+                        drawerLayout.closeDrawers();
+                        Intent intent = new Intent(getApplicationContext(), AlertHistoryActivity.class);
+                        startActivity(intent);
+                        break;
                 }
 
                 if(fratmentTransaction){
@@ -248,15 +227,8 @@ public class HomeActivity extends AppCompatActivity{
                 campus.setDateModified("2017-11-13T01:28:41.192Z");
                 SQLiteDrivingApp sqLiteDrivingApp = new SQLiteDrivingApp(MAIN_CONTEXT);
                 sqLiteDrivingApp.createCampus(campus);*/
-
-                Zone zone = new Zone();
-                zone.setIdZone("1");
-                zone.setType("Zone_111");
-                zone.getRefBuildingType().setValue("Zone");
-                zone.getName().setValue("cenidet palmira");
-                zone.getAddress().setValue("Interior Internadao Palmira S/N, Palmira, 62490 Cuernavaca, Mor.");
-                zone.getDescription().setValue("Zona cenidet palmira");
-
+                Intent intent = new Intent(getApplicationContext(), AlertHistoryActivity.class);
+                startActivity(intent);
                 Log.i("STATUS", "TOKEN-1: "+appPreferences.getPreferenceString(getApplicationContext(),ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_FCMTOKEN));
                 //Toast.makeText(getApplicationContext(), "Notify...!", Toast.LENGTH_LONG).show();
                 return true;

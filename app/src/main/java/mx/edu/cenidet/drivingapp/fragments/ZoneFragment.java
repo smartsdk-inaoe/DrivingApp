@@ -26,12 +26,9 @@ import com.google.android.gms.maps.model.PolygonOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
-import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import mx.edu.cenidet.drivingapp.services.SendDataService;
@@ -40,14 +37,14 @@ import www.fiware.org.ngsi.datamodel.entity.Zone;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CampusFragment extends Fragment implements OnMapReadyCallback, SendDataService.SendDataMethods {
+public class ZoneFragment extends Fragment implements OnMapReadyCallback, SendDataService.SendDataMethods {
     private View rootView;
     private MapView mapView;
     private GoogleMap gMap;
     private Marker marker;
     private CameraPosition camera;
     private Context context;
-    private String name, location,  pointMap;
+    private String name, location,  centerPoint;
     private JSONArray arrayLocation, arrayPoint;
     private double pointLatitude, pointLongitude;
     private SendDataService sendDataService;
@@ -58,7 +55,7 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
     private SQLiteDrivingApp sqLiteDrivingApp;
     private ArrayList<LatLng> listLocation;
 
-    public CampusFragment() {
+    public ZoneFragment() {
         context = HomeActivity.MAIN_CONTEXT;
         sendDataService = new SendDataService(context, this);
         sqLiteDrivingApp = new SQLiteDrivingApp(context);
@@ -68,14 +65,14 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_campus, container, false);
+        rootView = inflater.inflate(R.layout.fragment_zone, container, false);
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mapView = (MapView) rootView.findViewById(R.id.mapCampus);
+        mapView = (MapView) rootView.findViewById(R.id.mapZone);
 
         if (mapView != null) {
             mapView.onCreate(null);
@@ -153,12 +150,12 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
     }
 
     @Override
-    public void detectCampus(Campus campus, boolean statusLocation) {
+    public void detectZone(Zone zone, boolean statusLocation) {
         if(statusLocation == true){
             //Log.i("STATUS: ","Count "+count++);
-            name = campus.getName();
-            location = campus.getLocation();
-            pointMap = campus.getPointMap();
+            name = zone.getName().getValue();
+            location = zone.getLocation().getValue();
+            centerPoint = zone.getCenterPoint().getValue();
             String originalString, clearString;
             double latitude, longitude;
             String[] subString;
@@ -173,10 +170,12 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
                     longitude = Double.parseDouble(subString[1]);
                     listLocation.add(new LatLng(latitude,longitude));
                 }
-                arrayPoint = new JSONArray(pointMap);
-                JSONObject jsonObject = arrayPoint.getJSONObject(0);
+               /* arrayPoint = new JSONArray(centerPoint);
+                pointLatitude = arrayPoint.getDouble(0);
+                pointLongitude = arrayPoint.getDouble(1);*/
+                /*JSONObject jsonObject = arrayPoint.getJSONObject(0);
                 pointLatitude = jsonObject.getDouble("latitude");
-                pointLongitude = jsonObject.getDouble("longitude");
+                pointLongitude = jsonObject.getDouble("longitude");*/
                 //Dibuja el poligono
                 /*gMap.addPolygon(new PolygonOptions()
                         .addAll(listLocation).strokeColor(Color.RED));*/

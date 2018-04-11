@@ -29,11 +29,11 @@ public class AlertsControllerSdk implements MethodGET.MethodGETCallback, MethodP
     @Override
     public void onMethodGETCallback(Response response) {
         switch (method){
-            case "readAlertsByCampus":
-                alertsServiceMethods.readAlertsByCampus(response);
+            case "currentAlertByZone":
+                alertsServiceMethods.currentAlertByZone(response);
                 break;
-            case "currentAlertByCampus":
-                alertsServiceMethods.currentAlertByCampus(response);
+            case "historyAlertByZone":
+                alertsServiceMethods.historyAlertByZone(response);
                 break;
         }
     }
@@ -44,8 +44,8 @@ public class AlertsControllerSdk implements MethodGET.MethodGETCallback, MethodP
     }
 
     public interface AlertsServiceMethods{
-        void readAlertsByCampus(Response response);
-        void currentAlertByCampus(Response response);
+        void currentAlertByZone(Response response);
+        void historyAlertByZone(Response response);
     }
 
     /**
@@ -58,10 +58,17 @@ public class AlertsControllerSdk implements MethodGET.MethodGETCallback, MethodP
         mGET.execute(URL);
     }
 
-    public void currentAlertByCampus(String alertId){
+    public void currentAlertByZone(String alertId){
         //Zone_1523325691338
-        method = "currentAlertByCampus";
+        method = "currentAlertByZone";
         String URL = URL_BASE_HOST +ConfigServer.http_service.getPropiedad()+ConfigServer.http_current.getPropiedad()+"/"+alertId;
+        mGET = new MethodGET(this);
+        mGET.execute(URL);
+    }
+
+    public void historyAlertByZone(String alertId){
+        method = "historyAlertByZone";
+        String URL = URL_BASE_HOST +ConfigServer.http_service.getPropiedad()+ConfigServer.http_history.getPropiedad()+"/"+alertId;
         mGET = new MethodGET(this);
         mGET.execute(URL);
     }
