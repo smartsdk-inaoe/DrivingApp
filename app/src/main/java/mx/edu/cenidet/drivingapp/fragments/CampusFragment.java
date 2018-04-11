@@ -35,6 +35,7 @@ import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import mx.edu.cenidet.drivingapp.services.SendDataService;
+import www.fiware.org.ngsi.datamodel.entity.Zone;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,7 +54,7 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
     private int count = 1;
 
     //Pintar todos los Campus
-    private ArrayList<Campus> listCampus;
+    private ArrayList<Zone> listZone;
     private SQLiteDrivingApp sqLiteDrivingApp;
     private ArrayList<LatLng> listLocation;
 
@@ -94,18 +95,18 @@ public class CampusFragment extends Fragment implements OnMapReadyCallback, Send
         gMap.getUiSettings().setMyLocationButtonEnabled(false);
         //createOrUpdateMarkerByLocation(pointLatitude, pointLongitude);
         //Pintar todos los campus
-        listCampus = sqLiteDrivingApp.getAllCampus();
-        if(listCampus.size() == 0){
+        listZone = sqLiteDrivingApp.getAllZone();
+        if(listZone.size() == 0){
 
         }else{
             JSONArray arrayLocation;
             String originalString, clearString;
             double latitude, longitude;
             String[] subString;
-            for(int i=0; i<listCampus.size(); i++){
+            for(int i=0; i<listZone.size(); i++){
                 listLocation = new ArrayList<>();
                 try {
-                    arrayLocation = new JSONArray(listCampus.get(i).getLocation());
+                    arrayLocation = new JSONArray(listZone.get(i).getLocation().getValue());
                     for (int j=0; j<arrayLocation.length(); j++){
                         originalString = arrayLocation.get(j).toString();
                         clearString = originalString.substring(originalString.indexOf("[") + 1, originalString.indexOf("]"));

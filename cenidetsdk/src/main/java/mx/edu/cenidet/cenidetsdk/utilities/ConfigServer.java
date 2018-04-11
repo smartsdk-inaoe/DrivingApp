@@ -40,19 +40,8 @@ public enum  ConfigServer {
     http_token("token"),
     http_login("login"),
 
-    //---generales----
-    http_getAllActive("/getAllActive"),
-    http_getAllInactive("/getAllInactive"),
-    http_delete("/delete");
-
-    //-----organization----
-    /*http_organization_getAllActive("/getAllActive"),
-    http_organization_getAllInactive("/getAllInactive"),
-    http_organization_delete("/delete"),*/
-    //-----zone----
-    /*http_zone_getAllActive("/getAllActive"),
-    http_zone_getAllInactive("/getAllInactive"),
-    http_zone_delete("/delete");*/
+    //-----Alerts------
+    http_current("/alerts/zone/current");
 
 
     private String propiedad;

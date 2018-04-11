@@ -20,19 +20,23 @@ import java.util.Arrays;
 
 import mx.edu.cenidet.cenidetsdk.controllers.CampusController;
 import mx.edu.cenidet.cenidetsdk.controllers.DeviceTokenControllerSdk;
+import mx.edu.cenidet.cenidetsdk.controllers.ZoneControllerSdk;
 import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.cenidetsdk.httpmethods.Response;
 import mx.edu.cenidet.cenidetsdk.utilities.ConstantSdk;
 import mx.edu.cenidet.drivingapp.R;
+import www.fiware.org.ngsi.datamodel.entity.Zone;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 import www.fiware.org.ngsi.utilities.DevicePropertiesFunctions;
 
-public class SplashActivity extends AppCompatActivity implements CampusController.CampusServiceMethods, DeviceTokenControllerSdk.DeviceTokenServiceMethods{
+public class SplashActivity extends AppCompatActivity implements CampusController.CampusServiceMethods, DeviceTokenControllerSdk.DeviceTokenServiceMethods, ZoneControllerSdk.ZoneServiceMethods {
     private Intent mIntent;
     private CampusController campusController;
     private SQLiteDrivingApp sqLiteDrivingApp;
     private ArrayList<Campus> listCampus;
+    private ArrayList<Zone> listZone;
+    private ZoneControllerSdk zoneControllerSdk;
 
     //Envío del token de firebase
     private DeviceTokenControllerSdk deviceTokenControllerSdk;
@@ -45,7 +49,9 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
         context = this;
         sqLiteDrivingApp = new SQLiteDrivingApp(this);
         campusController = new CampusController(getApplicationContext(), this);
+        zoneControllerSdk = new ZoneControllerSdk(context, this);
         listCampus = sqLiteDrivingApp.getAllCampus();
+        listZone = sqLiteDrivingApp.getAllZone();
 
         //objeto que utilizaremos para llamar a los metodos de la gestion del token de firebase
         appPreferences = new ApplicationPreferences();
@@ -53,6 +59,9 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
         fcmToken = appPreferences.getPreferenceString(getApplicationContext(),ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_FCMTOKEN);
         if (!fcmToken.equals("") || fcmToken != null){
             deviceTokenControllerSdk.createDeviceToken(fcmToken, new DevicePropertiesFunctions().getDeviceId(context));
+        }
+        if(listZone.size()== 0){
+            zoneControllerSdk.readAllZone();
         }
 
         if(listCampus.size() == 0){
@@ -216,5 +225,60 @@ public class SplashActivity extends AppCompatActivity implements CampusControlle
     @Override
     public void updateDeviceToken(Response response) {
 
+    }
+
+    @Override
+    public void readAllZone(Response response) {
+        Log.i("Status: ", "CodeAllZone: "+response.getHttpCode());
+        Log.i("Status: ", "BODYAllZone: "+response.getBodyString());
+        switch (response.getHttpCode()){
+            case 200:
+                Zone zone;
+                JSONArray jsonArray = response.parseJsonArray(response.getBodyString());
+                //Log.i("Status: ", "----------");
+                //Log.i("Status: ", "BODY Array: "+jsonArray);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    try {
+                        zone = new Zone();
+                        JSONObject object = jsonArray.getJSONObject(i);
+                        zone.setIdZone(object.getString("idZone"));
+                        zone.setType(object.getString("type"));
+                        zone.getRefBuildingType().setValue(object.getString("refBuildingType"));
+                        zone.getName().setValue(object.getString("name"));
+                        zone.getAddress().setValue(object.getString("address"));
+                        zone.getCategory().setValue(""+object.getJSONArray("category"));
+                        zone.getLocation().setValue(""+object.getJSONArray("location"));
+                        zone.getCenterPoint().setValue(""+object.getJSONArray("centerPoint"));
+                        zone.getDescription().setValue(object.getString("description"));
+                        zone.getDateCreated().setValue(object.getString("dateCreated"));
+                        zone.getDateModified().setValue(object.getString("dateModified"));
+                        zone.getDateModified().setValue(object.getString("dateModified"));
+                        zone.getStatus().setValue(object.getString("status"));
+                        /*Log.i("Status: ", "ID: "+zone.getIdZone());
+                        Log.i("Status: ", "type: "+zone.getType());
+                        Log.i("Status: ", "refBuildingType: "+zone.getRefBuildingType().getValue());
+                        Log.i("Status: ", "name: "+zone.getName().getValue());
+                        Log.i("Status: ", "address: "+zone.getAddress().getValue());
+                        Log.i("Status: ", "category: "+zone.getCategory().getValue());
+                        Log.i("Status: ", "location: "+zone.getLocation().getValue());
+                        Log.i("Status: ", "centerPoint: "+zone.getCenterPoint().getValue());
+                        Log.i("Status: ", "description: "+zone.getDescription().getValue());
+                        Log.i("Status: ", "Create: "+zone.getDateCreated().getValue());
+                        Log.i("Status: ", "Modified: "+zone.getDateModified().getValue());
+                        Log.i("Status: ", "status: "+zone.getStatus().getValue());*/
+
+                        if(sqLiteDrivingApp.createZone(zone) == true){
+                            Log.i("Status: ", "Dato insertado correctamente Zone...!");
+                        }else{
+                            Log.i("Status: ", "Error al insertar Zone...!");
+                        }
+                        Log.i("--------: ", "--------------------------------------");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                break;
+        }
     }
 }

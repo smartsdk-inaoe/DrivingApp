@@ -33,6 +33,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import mx.edu.cenidet.cenidetsdk.controllers.DeviceTokenControllerSdk;
 import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
@@ -47,8 +52,10 @@ import mx.edu.cenidet.drivingapp.fragments.MyLocationFragment;
 import mx.edu.cenidet.drivingapp.fragments.SpeedFragment;
 import mx.edu.cenidet.drivingapp.services.DeviceService;
 import mx.edu.cenidet.drivingapp.services.SendDataService;
+import www.fiware.org.ngsi.datamodel.entity.Zone;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 import www.fiware.org.ngsi.utilities.Constants;
+import www.fiware.org.ngsi.utilities.Functions;
 import www.fiware.org.ngsi.utilities.Tools;
 
 public class HomeActivity extends AppCompatActivity{
@@ -241,6 +248,15 @@ public class HomeActivity extends AppCompatActivity{
                 campus.setDateModified("2017-11-13T01:28:41.192Z");
                 SQLiteDrivingApp sqLiteDrivingApp = new SQLiteDrivingApp(MAIN_CONTEXT);
                 sqLiteDrivingApp.createCampus(campus);*/
+
+                Zone zone = new Zone();
+                zone.setIdZone("1");
+                zone.setType("Zone_111");
+                zone.getRefBuildingType().setValue("Zone");
+                zone.getName().setValue("cenidet palmira");
+                zone.getAddress().setValue("Interior Internadao Palmira S/N, Palmira, 62490 Cuernavaca, Mor.");
+                zone.getDescription().setValue("Zona cenidet palmira");
+
                 Log.i("STATUS", "TOKEN-1: "+appPreferences.getPreferenceString(getApplicationContext(),ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_FCMTOKEN));
                 //Toast.makeText(getApplicationContext(), "Notify...!", Toast.LENGTH_LONG).show();
                 return true;

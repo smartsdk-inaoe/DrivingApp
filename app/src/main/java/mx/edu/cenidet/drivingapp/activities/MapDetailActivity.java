@@ -29,7 +29,7 @@ public class MapDetailActivity extends AppCompatActivity implements OnMapReadyCa
     private GoogleMap gMap;
     private Marker marker;
     private CameraPosition camera;
-    private String name, location,  pointMap;
+    private String name, location,  centerPoint;
     private JSONArray arrayLocation, arrayPoint;
     private ArrayList<LatLng> listLocation;
     private double pointLatitude, pointLongitude;
@@ -42,10 +42,10 @@ public class MapDetailActivity extends AppCompatActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        if(getIntent().getStringExtra("name") != null && getIntent().getStringExtra("location") != null && getIntent().getStringExtra("pointMap") != null){
+        if(getIntent().getStringExtra("name") != null && getIntent().getStringExtra("location") != null && getIntent().getStringExtra("centerPoint") != null){
             name = getIntent().getStringExtra("name");
             location = getIntent().getStringExtra("location");
-            pointMap = getIntent().getStringExtra("pointMap");
+            centerPoint = getIntent().getStringExtra("centerPoint");
             String originalString, clearString;
             double latitude, longitude;
             String[] subString;
@@ -60,17 +60,21 @@ public class MapDetailActivity extends AppCompatActivity implements OnMapReadyCa
                     longitude = Double.parseDouble(subString[1]);
                     listLocation.add(new LatLng(latitude,longitude));
                 }
-                arrayPoint = new JSONArray(pointMap);
-                JSONObject jsonObject = arrayPoint.getJSONObject(0);
+                arrayPoint = new JSONArray(centerPoint);
+                pointLatitude = arrayPoint.getDouble(0);
+                pointLongitude = arrayPoint.getDouble(1);
+                /*JSONObject jsonObject = arrayPoint.getJSONObject(0);
                 pointLatitude = jsonObject.getDouble("latitude");
-                pointLongitude = jsonObject.getDouble("longitude");
+                pointLongitude = jsonObject.getDouble("longitude");*/
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Log.i("Status ", "Map Detail Name: "+name);
-            Log.i("Status ", "Map Detail location: "+location);
-            Log.i("Status ", "Map Detail pointMap: "+pointMap);
+            Log.i("Map1 ", "Map Detail Name: "+name);
+            Log.i("Map1 ", "Map Detail location: "+location);
+            Log.i("Map1 ", "Map Detail pointMap: "+centerPoint);
+            Log.i("Map1 ", "Map Detail poin1: "+pointLatitude);
+            Log.i("Map1 ", "Map Detail poin2: "+pointLongitude);
         }
     }
 

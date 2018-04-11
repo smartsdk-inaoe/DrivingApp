@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -17,10 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-
 import java.util.List;
-import java.util.Map;
 
 import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
@@ -28,25 +24,26 @@ import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import mx.edu.cenidet.drivingapp.activities.MapDetailActivity;
 import mx.edu.cenidet.drivingapp.adapters.MyAdapterCampus;
+import www.fiware.org.ngsi.datamodel.entity.Zone;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MyCampusFragment extends Fragment {
     private View rootView;
-    private ListView listViewCampus;
-    private List<Campus> listCampus;
+    private ListView listViewZone;
+    private List<Zone> listZone;
     private SQLiteDrivingApp sqLiteDrivingApp;
     private Context context;
     private MyAdapterCampus myAdapterCampus;
     private AdapterView.AdapterContextMenuInfo info;
-    private String name, location,  pointMap;
+    private String name, location, centerPoint;
 
     public MyCampusFragment() {
         // Required empty public constructor
         context = HomeActivity.MAIN_CONTEXT;
         sqLiteDrivingApp = new SQLiteDrivingApp(context);
-        listCampus = sqLiteDrivingApp.getAllCampus();
+        listZone = sqLiteDrivingApp.getAllZone();
         /*if(listCampus.size() > 0){
             for(int i=0; i<listCampus.size(); i++){
                 Log.i("Status: ", "My Campus name: "+listCampus.get(i).getName());
@@ -66,10 +63,10 @@ public class MyCampusFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listViewCampus = (ListView) rootView.findViewById(R.id.listViewCampus);
-        myAdapterCampus = new MyAdapterCampus(context, R.layout.list_campus, listCampus);
-        listViewCampus.setAdapter(myAdapterCampus);
-        registerForContextMenu(listViewCampus);
+        listViewZone = (ListView) rootView.findViewById(R.id.listViewZone);
+        myAdapterCampus = new MyAdapterCampus(context, R.layout.list_zone, listZone);
+        listViewZone.setAdapter(myAdapterCampus);
+        registerForContextMenu(listViewZone);
     }
 
 
@@ -79,7 +76,7 @@ public class MyCampusFragment extends Fragment {
         MenuInflater menuInflater = getActivity().getMenuInflater();
 
         info =  (AdapterView.AdapterContextMenuInfo) menuInfo;
-        menu.setHeaderTitle(listCampus.get(info.position).getName());
+        menu.setHeaderTitle(listZone.get(info.position).getName().getValue());
         menuInflater.inflate(R.menu.campus_map_menu, menu);
     }
 
@@ -88,13 +85,13 @@ public class MyCampusFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.menu_see_map:
                 info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                name = listCampus.get(info.position).getName();
-                location = listCampus.get(info.position).getLocation();
-                pointMap = listCampus.get(info.position).getPointMap();
+                name = listZone.get(info.position).getName().getValue();
+                location = listZone.get(info.position).getLocation().getValue();
+                centerPoint = listZone.get(info.position).getCenterPoint().getValue();
                 Intent intent = new Intent(context, MapDetailActivity.class);
                 intent.putExtra("name", name);
                 intent.putExtra("location", location);
-                intent.putExtra("pointMap", pointMap);
+                intent.putExtra("centerPoint", centerPoint);
                 startActivity(intent);
                 //Toast.makeText(getContext(), name, Toast.LENGTH_SHORT).show();
                 return true;

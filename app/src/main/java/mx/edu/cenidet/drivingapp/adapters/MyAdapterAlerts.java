@@ -54,10 +54,28 @@ public class MyAdapterAlerts extends BaseAdapter {
         //Nos traemos el valor dependiente de la posición
         String category = listAlerts.get(position).getCategory().getValue();
         String description = listAlerts.get(position).getDescription().getValue();
+        String severity = listAlerts.get(position).getSeverity().getValue();
 
         //Referenciamos el elemento a modificar y lo rellenamos.
         ImageView imageViewAlerts = (ImageView) view.findViewById(R.id.imageViewAlerts);
-        imageViewAlerts.setImageResource(R.drawable.ic_alert_critical);
+        switch (severity){
+            case "informational":
+                imageViewAlerts.setImageResource(R.drawable.ic_alert_informational);
+                break;
+            case "low":
+                imageViewAlerts.setImageResource(R.drawable.ic_alert_low);
+                break;
+            case "medium":
+                imageViewAlerts.setImageResource(R.drawable.ic_alert_medium);
+                break;
+            case "high":
+                imageViewAlerts.setImageResource(R.drawable.ic_alert_high);
+                break;
+            case "critical":
+                imageViewAlerts.setImageResource(R.drawable.ic_alert_critical);
+                break;
+        }
+
         TextView textViewCategory = (TextView) view.findViewById(R.id.textViewCategory);
         textViewCategory.setText(category);
         TextView textViewDescription = (TextView) view.findViewById(R.id.textViewDescription);

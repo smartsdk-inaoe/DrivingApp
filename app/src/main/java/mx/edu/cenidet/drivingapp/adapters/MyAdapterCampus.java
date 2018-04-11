@@ -11,6 +11,7 @@ import java.util.List;
 
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.drivingapp.R;
+import www.fiware.org.ngsi.datamodel.entity.Zone;
 
 /**
  * Created by Cipriano on 3/18/2018.
@@ -19,21 +20,21 @@ import mx.edu.cenidet.drivingapp.R;
 public class MyAdapterCampus extends BaseAdapter {
     private Context context;
     private int layout;
-    private List<Campus> listCampus;
+    private List<Zone> listZone;
 
-    public MyAdapterCampus(Context context, int layout, List<Campus> listCampus){
+    public MyAdapterCampus(Context context, int layout, List<Zone> listZone){
         this.context = context;
         this.layout = layout;
-        this.listCampus = listCampus;
+        this.listZone = listZone;
     }
     @Override
     public int getCount() {
-        return this.listCampus.size();
+        return this.listZone.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return this.listCampus.get(position);
+        return this.listZone.get(position);
     }
 
     @Override
@@ -47,14 +48,14 @@ public class MyAdapterCampus extends BaseAdapter {
         View view = convertView;
         //Inflamos la vista que nos ha llegado con nuestro layout personalizado
         LayoutInflater layoutInflater = LayoutInflater.from(this.context);
-        view = layoutInflater.inflate(R.layout.list_campus, null);
+        view = layoutInflater.inflate(R.layout.list_zone, null);
 
         //Nos traemos el valor dependiente de la posición
-        String id = listCampus.get(position).getId();
-        String name = listCampus.get(position).getName();
+        String id = listZone.get(position).getIdZone();
+        String name = listZone.get(position).getName().getValue();
 
         //Referenciamos el elemento a modificar y lo rellenamos.
-        TextView textViewCampus = (TextView) view.findViewById(R.id.textViewCampus);
+        TextView textViewCampus = (TextView) view.findViewById(R.id.textViewZone);
         textViewCampus.setText(name);
 
         return view;

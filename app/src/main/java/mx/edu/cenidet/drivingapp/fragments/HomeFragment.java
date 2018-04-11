@@ -124,7 +124,7 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
                 alert.getDateObserved().setValue(Functions.getActualDate());
                 alert.getDescription().setValue("Test Alert Android 1");
                 alert.getLocation().setValue("18.8797396, -99.2217132");
-                alert.getSeverity().setValue("informational");
+                alert.getSeverity().setValue("medium");
                 alert.getSubCategory().setValue("UnauthorizedSpeedDetection");
                 alert.getValidFrom().setValue(Functions.getActualDate());
                 alert.getValidTo().setValue(Functions.getActualDate());

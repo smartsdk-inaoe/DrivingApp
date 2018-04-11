@@ -56,7 +56,8 @@ public class AlertsFragment extends Fragment implements AlertsControllerSdk.Aler
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_alerts, container, false);
-        alertsControllerSdk.readAlertsByCampus();
+        //alertsControllerSdk.readAlertsByCampus();
+        alertsControllerSdk.currentAlertByCampus("Zone_1523325691338");
         listAlerts = new ArrayList<Alert>();
         return rootView;
     }
@@ -73,38 +74,53 @@ public class AlertsFragment extends Fragment implements AlertsControllerSdk.Aler
         Log.i("Status: ", "Code Alerts: "+response.getHttpCode());
         switch (response.getHttpCode()){
             case 200:
-                Log.i("Status: ", "Body: "+response.getBodyString());
-                Alert alert;
-                JSONArray jsonArray = response.parseJsonArray(response.getBodyString());
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    try {
-                        alert = new Alert();
-                        JSONObject object = jsonArray.getJSONObject(i);
-                        alert.setId(object.getString("id"));
-                        alert.setType(object.getString("type"));
-                        alert.getAlertSource().setValue(object.getString("alertSource"));
-                        alert.getCategory().setValue(object.getString("category"));
-                        alert.getDateObserved().setValue(object.getString("dateObserved"));
-                        alert.getDescription().setValue(object.getString("description"));
-                        alert.getLocation().setValue(object.getString("location"));
-                        alert.getSeverity().setValue(object.getString("severity"));
-                        alert.getSubCategory().setValue(object.getString("subCategory"));
-                        alert.getValidFrom().setValue(object.getString("validFrom"));
-                        alert.getValidTo().setValue(object.getString("validTo"));
-                        listAlerts.add(alert);
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-
-                    if(listAlerts.size() > 0){
-                        myAdapterAlerts = new MyAdapterAlerts(context, R.id.listViewAlerts, listAlerts);
-                        listViewAlerts.setAdapter(myAdapterAlerts);
-                    }
-                }
-
                 break;
         }
 
+    }
+
+    @Override
+    public void currentAlertByCampus(Response response) {
+        Log.i("Test: ", "Code Alerts: "+response.getHttpCode());
+        switch (response.getHttpCode()){
+            case 200:
+                Log.i("Test: ", "Body: "+response.getBodyString());
+                Alert alert;
+                /*JSONObject jsonObject = response.parseJsonObject(response.getBodyString());
+                if(jsonObject.length() == 0 || jsonObject.toString().equals("{}")){
+                    Log.i("Test: ", "Vacio...!: "+response.getBodyString());
+                }else{*/
+                    Log.i("Test: ", "Obtiene Datos...!: "+response.getBodyString());
+                    JSONArray jsonArray = response.parseJsonArray(response.getBodyString());
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        try {
+                            alert = new Alert();
+                            JSONObject object = jsonArray.getJSONObject(i);
+                            alert.setId(object.getString("id"));
+                            alert.setType(object.getString("type"));
+                            alert.getAlertSource().setValue(object.getString("alertSource"));
+                            alert.getCategory().setValue(object.getString("category"));
+                            alert.getDateObserved().setValue(object.getString("dateObserved"));
+                            alert.getDescription().setValue(object.getString("description"));
+                            alert.getLocation().setValue(object.getString("location"));
+                            alert.getSeverity().setValue(object.getString("severity"));
+                            alert.getSubCategory().setValue(object.getString("subCategory"));
+                            alert.getValidFrom().setValue(object.getString("validFrom"));
+                            alert.getValidTo().setValue(object.getString("validTo"));
+                            listAlerts.add(alert);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+
+                        if(listAlerts.size() > 0){
+                            myAdapterAlerts = new MyAdapterAlerts(context, R.id.listViewAlerts, listAlerts);
+                            listViewAlerts.setAdapter(myAdapterAlerts);
+                        }
+                    }
+                //}
+
+                break;
+        }
     }
 
     @Override

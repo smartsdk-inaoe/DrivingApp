@@ -13,6 +13,7 @@ import mx.edu.cenidet.cenidetsdk.utilities.ConfigServer;
 
 public class AlertsControllerSdk implements MethodGET.MethodGETCallback, MethodPOST.MethodPOSTCallback {
     private static String URL_BASE_ALERT = ConfigServer.http_host_alert.getPropiedad();
+    private static String URL_BASE_HOST = ConfigServer.http_host.getPropiedad();
     private String method;
     private MethodPOST mPOST;
     private MethodGET mGET;
@@ -31,6 +32,9 @@ public class AlertsControllerSdk implements MethodGET.MethodGETCallback, MethodP
             case "readAlertsByCampus":
                 alertsServiceMethods.readAlertsByCampus(response);
                 break;
+            case "currentAlertByCampus":
+                alertsServiceMethods.currentAlertByCampus(response);
+                break;
         }
     }
 
@@ -41,6 +45,7 @@ public class AlertsControllerSdk implements MethodGET.MethodGETCallback, MethodP
 
     public interface AlertsServiceMethods{
         void readAlertsByCampus(Response response);
+        void currentAlertByCampus(Response response);
     }
 
     /**
@@ -49,6 +54,14 @@ public class AlertsControllerSdk implements MethodGET.MethodGETCallback, MethodP
     public void readAlertsByCampus(){
         method = "readAlertsByCampus";
         String URL = URL_BASE_ALERT + "5a08f54972a5b81a7d040119";
+        mGET = new MethodGET(this);
+        mGET.execute(URL);
+    }
+
+    public void currentAlertByCampus(String alertId){
+        //Zone_1523325691338
+        method = "currentAlertByCampus";
+        String URL = URL_BASE_HOST +ConfigServer.http_service.getPropiedad()+ConfigServer.http_current.getPropiedad()+"/"+alertId;
         mGET = new MethodGET(this);
         mGET.execute(URL);
     }

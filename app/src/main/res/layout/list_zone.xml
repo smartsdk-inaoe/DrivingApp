@@ -7,7 +7,7 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/imageViewCampus"
+        android:id="@+id/imageViewZone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -16,7 +16,7 @@
         app:srcCompat="@android:drawable/ic_dialog_map" />
 
     <TextView
-        android:id="@+id/textViewCampus"
+        android:id="@+id/textViewZone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#333"

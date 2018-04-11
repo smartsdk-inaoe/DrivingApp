@@ -5,7 +5,7 @@
     tools:context="mx.edu.cenidet.drivingapp.fragments.MyCampusFragment">
 
     <ListView
-        android:id="@+id/listViewCampus"
+        android:id="@+id/listViewZone"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

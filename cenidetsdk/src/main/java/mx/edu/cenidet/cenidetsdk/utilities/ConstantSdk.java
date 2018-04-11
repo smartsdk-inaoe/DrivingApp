@@ -20,4 +20,7 @@ public class ConstantSdk {
     public static final String SERVICE_RESULT_LATITUDE = "latitude";
     public static final String SERVICE_RESULT_LONGITUDE = "longitude";
 
+    //ZONA
+    public static final String PREFERENCE_KEY_CURRENT_ZONE = "current_zone";
+
 }

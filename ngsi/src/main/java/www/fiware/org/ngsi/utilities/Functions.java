@@ -310,7 +310,7 @@ public class Functions {
      */
     public static String checkForNewsAttributes(Object arg){
         Gson gson = new Gson();
-        //Log.i("JSON_gson: ", gson.toJson(arg));
+        Log.i("JSON_gson: ", gson.toJson(arg));
         return gson.toJson(arg);
     }
 
