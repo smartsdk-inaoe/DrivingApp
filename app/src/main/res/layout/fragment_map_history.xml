@@ -5,7 +5,7 @@
     tools:context="mx.edu.cenidet.drivingapp.fragments.MapHistoryFragment">
 
     <com.google.android.gms.maps.MapView
-        android:id="@+id/map"
+        android:id="@+id/mapHistoryAlerts"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

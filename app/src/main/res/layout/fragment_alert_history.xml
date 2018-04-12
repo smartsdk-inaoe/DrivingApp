@@ -4,10 +4,9 @@
     android:layout_height="match_parent"
     tools:context="mx.edu.cenidet.drivingapp.fragments.AlertHistoryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ListView
+        android:id="@+id/listViewAlertsHistory"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="fragment Alert" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>

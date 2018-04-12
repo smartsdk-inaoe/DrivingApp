@@ -2,8 +2,10 @@ package mx.edu.cenidet.drivingapp.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -24,6 +26,7 @@ import mx.edu.cenidet.cenidetsdk.httpmethods.Response;
 import mx.edu.cenidet.cenidetsdk.utilities.ConstantSdk;
 import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.adapters.MyAdapterAlerts;
+import mx.edu.cenidet.drivingapp.fragments.AlertHistoryFragment;
 import www.fiware.org.ngsi.datamodel.entity.Alert;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 
@@ -42,6 +45,9 @@ public class AlertHistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alert_history);
+        //setToolbar();
+        //Enviar Datos a los Fragment
+
         /*context = HomeActivity.MAIN_CONTEXT;
         listAlerts = new ArrayList<>();
         applicationPreferences = new ApplicationPreferences();
@@ -57,6 +63,13 @@ public class AlertHistoryActivity extends AppCompatActivity {
             }
         }*/
 
+    }
+
+    private void setToolbar(){
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_return);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /*@Override

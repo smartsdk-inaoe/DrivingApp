@@ -33,13 +33,6 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     }
     
     private void sendRegistrationToServer(String token) {
-
         Context context = getApplicationContext();
-
-        /*Intent serviceIntent = new Intent(context, FCMToken.class);
-        serviceIntent.putExtra("FCMToken", token);
-        context.startService(serviceIntent);
-        HeadlessJsTaskService.acquireWakeLockNow(context);*/
-
     }
 }

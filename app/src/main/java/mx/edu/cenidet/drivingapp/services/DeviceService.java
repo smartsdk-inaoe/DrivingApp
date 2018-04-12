@@ -39,10 +39,12 @@ import java.util.HashMap;
 
 import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import www.fiware.org.ngsi.controller.DeviceController;
+import www.fiware.org.ngsi.controller.SQLiteController;
 import www.fiware.org.ngsi.datamodel.entity.Device;
 import www.fiware.org.ngsi.datamodel.entity.DeviceModel;
 import www.fiware.org.ngsi.datamodel.entity.DeviceSensor;
 import www.fiware.org.ngsi.datamodel.model.DeviceUpdateModel;
+import www.fiware.org.ngsi.db.sqlite.entity.Tbl_Data_Temp;
 import www.fiware.org.ngsi.httpmethodstransaction.Response;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 import www.fiware.org.ngsi.utilities.Constants;
@@ -65,13 +67,16 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
     private int id;
 
     //Modelo de datos Device, DeviceModel.
-    DeviceController deviceController;
-    private Functions functions;
+    private DeviceController deviceController;
     private DevicePropertiesFunctions deviceProperties;
-    private DeviceModel deviceModel;
     private DeviceUpdateModel deviceUpdateModel;
     private ApplicationPreferences appPreferences;
     private String owner;
+    private SQLiteController sqLiteController;
+    private Tbl_Data_Temp tblTemp;
+    private Tbl_Data_Temp deviceValidateExists;
+    private Device device;
+
 
     //Giroscopio y acelerometro
     private double ax, ay, az, gx, gy, gz;
@@ -118,12 +123,17 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
         //uLocationService = new UsersLocationService(context,this);
         //id = HomeActivity.ID;
         deviceSensor = new DeviceSensor();
-        functions = new Functions();
+
+        //Modelo de datos Device, DeviceModel.
         deviceProperties = new DevicePropertiesFunctions();
-        deviceModel = new DeviceModel();
         deviceUpdateModel = new DeviceUpdateModel();
         appPreferences = new ApplicationPreferences();
         deviceController = new DeviceController(this);
+        tblTemp = new Tbl_Data_Temp();
+        sqLiteController = new SQLiteController(context);
+        device = new Device();
+
+
         if (appPreferences.getPreferenceString(context, ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_USER_ID) != null){
             owner = appPreferences.getPreferenceString(context, ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_USER_ID);
         }else{
@@ -145,7 +155,7 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, locationListenerGPS);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListenerGPS);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
 
         //Sensor acelerometro y giroscopio
@@ -162,87 +172,6 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
         public void onLocationChanged(Location location) {
             if (location != null) {
                 eventDetecion(location);
-                /*latitudeGPS = (double) location.getLatitude();
-                longitudeGPS = (double) location.getLongitude();
-                speedMS = (double) location.getSpeed();
-                speedKmHr = (double) (location.getSpeed() * 3.6);
-
-                Intent intent = new Intent(Constants.SERVICE_CHANGE_LOCATION_DEVICE).putExtra(Constants.SERVICE_RESULT_LATITUDE, latitudeGPS)
-                        .putExtra(Constants.SERVICE_RESULT_LONGITUDE, longitudeGPS).putExtra(Constants.SERVICE_RESULT_SPEED_MS, speedMS).putExtra(Constants.SERVICE_RESULT_SPEED_KMHR, speedKmHr);
-                LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(intent);
-
-                // DETECTAR EVENTOS LOCATION-----
-
-                //Detectar excesos de velocidad
-                if(speedKmHr > speedMax){
-                    String message = "Excedio la velodidad maxima...";
-                }else if(speedKmHr < speedMin){
-                    String message = "Su velocidad esta por debajo de los limites establecidos...";
-                }else{
-                    String message = "Conduce dentro de los parametros establecidos...";
-                }
-                Log.i(STATUS, "SPEED: "+speedKmHr);
-                //Logica para obtener la velocidad anterior y actual
-                if(hashMapSpeedFromTo.isEmpty() || hashMapSpeedFromTo.size() == 0){
-                    speedFrom = speedKmHr;
-                    speedTo = speedKmHr;
-                    hashMapSpeedFromTo.put("speedFrom", speedFrom);
-                    hashMapSpeedFromTo.put("speedTo", speedTo);
-                    Log.i("STATUS", "SPEED INICIO VACIO: speedFrom: "+hashMapSpeedFromTo.get("speedFrom")+" speedTo: "+hashMapSpeedFromTo.get("speedTo"));
-                }else{
-                    speedFrom = hashMapSpeedFromTo.get("speedTo");
-                    speedTo = speedKmHr;
-                    hashMapSpeedFromTo.put("speedFrom", speedFrom);
-                    hashMapSpeedFromTo.put("speedTo", speedTo);
-                    Log.i("STATUS", "SPEED NO VACIO: speedFrom: "+hashMapSpeedFromTo.get("speedFrom")+" speedTo: "+hashMapSpeedFromTo.get("speedTo"));
-                }
-
-                Log.i(STATUS, "GPS LATITUDE: "+latitudeGPS+" longitude: "+longitudeGPS);
-                //Logica para obtener location apartir de (location anterior) y location hasta (location actual)
-                if(hashMapLatLngFromTo.isEmpty() || hashMapLatLngFromTo.size() == 0){
-                    latitudeFrom = latitudeGPS;
-                    longitudeFrom = longitudeGPS;
-                    latitudeTo = latitudeGPS;
-                    longitudeTo = longitudeGPS;
-                    hashMapLatLngFromTo.put("latitudeFrom", latitudeFrom);
-                    hashMapLatLngFromTo.put("longitudeFrom", longitudeFrom);
-                    hashMapLatLngFromTo.put("latitudeTo", latitudeTo);
-                    hashMapLatLngFromTo.put("longitudeTo", longitudeTo);
-                    Log.i("STATUS", "hashMapLatLngFromTo INICIO VACIO:\nlatitudeFrom: "+hashMapLatLngFromTo.get("latitudeFrom")+" longitudeFrom: "+hashMapLatLngFromTo.get("longitudeFrom")+" latitudeTo: "+hashMapLatLngFromTo.get("latitudeTo")+" longitudeTo: "+hashMapLatLngFromTo.get("longitudeTo"));
-                }else{
-                    latitudeFrom = hashMapLatLngFromTo.get("latitudeTo");
-                    longitudeFrom = hashMapLatLngFromTo.get("longitudeTo");
-                    latitudeTo = latitudeGPS;
-                    longitudeTo = longitudeGPS;
-                    hashMapLatLngFromTo.put("latitudeFrom", latitudeFrom);
-                    hashMapLatLngFromTo.put("longitudeFrom", longitudeFrom);
-                    hashMapLatLngFromTo.put("latitudeTo", latitudeTo);
-                    hashMapLatLngFromTo.put("longitudeTo", longitudeTo);
-
-                    Log.i("STATUS", "hashMapLatLngFromTo NO VACIO:\nlatitudeFrom: "+hashMapLatLngFromTo.get("latitudeFrom")+" longitudeFrom: "+hashMapLatLngFromTo.get("longitudeFrom")+" latitudeTo: "+hashMapLatLngFromTo.get("latitudeTo")+" longitudeTo: "+hashMapLatLngFromTo.get("longitudeTo"));
-                }
-
-                //PARADA REPENTINAS-----
-                if(!hashMapSpeedFromTo.isEmpty()){
-                    if(hashMapSpeedFromTo.get("speedFrom") != 0 && hashMapSpeedFromTo.get("speedTo") == 0){
-                        //Calculo de la distancia
-                        // double distance = 0;
-                    }else{
-
-                    }
-                }
-                latLngFrom = new LatLng(hashMapLatLngFromTo.get("latitudeFrom"), hashMapLatLngFromTo.get("longitudeFrom"));
-                latLngTo = new LatLng(hashMapLatLngFromTo.get("latitudeTo"), hashMapLatLngFromTo.get("longitudeTo"));
-                //latLngTo = new LatLng(18.876807, -99.219968);
-                distance = SphericalUtil.computeDistanceBetween(latLngFrom, latLngTo);
-                Log.i(STATUS, "DISTANCE 1: "+distance+"m");
-
-                location.distanceBetween(latitudeLast, longitudeLast, latitudeGPS, longitudeGPS, distanceArray);
-                Log.i(STATUS, "DISTANCE 2: "+distanceArray[0]+"km");
-                 //location.distanceBetween();
-                // FIN DETECTAR EVENTOS LOCATION-----
-
-
 
                 /*UserLocation userLocation = updateUserLocation(HomeActivity.ID, latitudeGPS, longitudeGPS);
                 try {
@@ -250,7 +179,7 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }*/
-                //Log.i(STATUS, "GPS latitude: "+latitudeGPS+" longitude: "+longitudeGPS); */
+                Log.i(STATUS, "GPS latitude: "+location.getLatitude()+" longitude: "+location.getLatitude());
             }else {
                 Log.i(STATUS, "Error GPS...!");
                 //Toast.makeText(getBaseContext(), "Error GPS...!", Toast.LENGTH_LONG).show();
@@ -281,20 +210,14 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
         @Override
         public void onLocationChanged(Location location) {
             if (location != null) {
-                latitudeNetwork = (double)location.getLatitude();
-                longitudeNetwork = (double)location.getLongitude();
-                speedMS = (double) location.getSpeed();
-                speedKmHr = (double) (location.getSpeed() * 3.6);
-                Intent intent = new Intent(Constants.SERVICE_CHANGE_LOCATION_DEVICE).putExtra(Constants.SERVICE_RESULT_LATITUDE, latitudeNetwork)
-                        .putExtra(Constants.SERVICE_RESULT_LONGITUDE, longitudeNetwork).putExtra(Constants.SERVICE_RESULT_SPEED_MS, speedMS).putExtra(Constants.SERVICE_RESULT_SPEED_KMHR, speedKmHr);
-                LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(intent);
+                eventDetecion(location);
                 /*UserLocation userLocation = updateUserLocation(HomeActivity.ID, latitudeNetwork, longitudeNetwork);
                 try {
                     uLocationService.updateUserLocation(userLocation);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }*/
-                // Log.i(STATUS, "Network latitude: "+latitudeNetwork+" longitude: "+longitudeNetwork);
+                 Log.i(STATUS, "NETWORK latitude: "+location.getLatitude()+" longitude: "+location.getLongitude());
             }else{
                 Log.i(STATUS, "Error Network...!");
             }
@@ -486,9 +409,9 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
                 LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(intent);
 
                 //Envía el Modelo de datos Device
+                sendContext(latitudeGPS, longitudeGPS);
 
-
-                Log.i(STATUS, "GPS LATITUDE: " + latitudeGPS + " longitude: " + longitudeGPS);
+                //Log.i(STATUS, "GPS LATITUDE: " + latitudeGPS + " longitude: " + longitudeGPS);
                 //Logica para obtener location apartir de (location anterior) y location hasta (location actual)
                 if (hashMapLatLngFromTo.isEmpty() || hashMapLatLngFromTo.size() == 0) {
                     latitudeFrom = latitudeGPS;
@@ -649,8 +572,33 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
 
     }
 
-    public Device createDevice(Double latitude, Double longitude){
-        String actualDate = functions.getActualDate();
+    private void sendContext(Double latitude, Double longitude){
+        //Objeto Device
+        device = createDevice(latitude, longitude);
+        tblTemp.setKeyword(device.getId());
+        deviceValidateExists = sqLiteController.getByKeywordTempCreate(tblTemp);
+        if (deviceValidateExists == null) {
+            //Obtener los datos para para cargarlos en el Device
+            try {
+                deviceController.createEntity(context, device.getId(),device);
+            } catch (Exception e) {
+                Log.i(STATUS, "Exception Device...!");
+                //Toast.makeText(getBaseContext(), "Exception Device...!", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            //Objeto Device para actualizarlo
+            deviceUpdateModel = updateDevice(latitude, longitude);
+            try {
+                deviceController.updateEntity(context, device.getId(), deviceUpdateModel);
+            } catch (Exception e) {
+                Log.i(STATUS, "Exception Device Update...!");
+                //Toast.makeText(getBaseContext(), "Exception Device Update...!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private Device createDevice(Double latitude, Double longitude){
+        String actualDate = Functions.getActualDate();
 
         Device device = new Device();
         device.setId(deviceProperties.getDeviceId(context));
@@ -662,12 +610,13 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
         device.getIpAddress().setValue(deviceProperties.getIPAddress(true));
         device.getRefDeviceModel().setValue(deviceProperties.getDeviceModelId());
         device.getSerialNumber().setValue(deviceProperties.getSerialNumber());
+        device.getLocation().setValue(latitude + ", " + longitude);
         device.getOwner().setValue(owner);
         return device;
     }
 
-    public DeviceUpdateModel updateDevice(Double latitude, Double longitude){
-        String actualDate = functions.getActualDate();
+    private DeviceUpdateModel updateDevice(Double latitude, Double longitude){
+        String actualDate = Functions.getActualDate();
 
         DeviceUpdateModel deviceUpdateModel = new DeviceUpdateModel();
         deviceUpdateModel.getCategory().setValue("smartphone");
@@ -678,13 +627,33 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
         deviceUpdateModel.getRefDeviceModel().setValue(deviceProperties.getDeviceModelId());
         deviceUpdateModel.getSerialNumber().setValue(deviceProperties.getSerialNumber());
         deviceUpdateModel.getOwner().setValue(owner);
-        deviceUpdateModel.getLocation().setValue(latitudeGPS + ", " + longitudeGPS);
+        deviceUpdateModel.getLocation().setValue(latitude + ", " + longitude);
         return  deviceUpdateModel;
     }
 
     @Override
     public void onCreateEntity(Response response) {
-
+        //Toast.makeText(this, "Code Device: " + response.getHttpCode(), Toast.LENGTH_SHORT).show();
+        if(response.getHttpCode() == 201){
+            //Toast.makeText(this, "Entity Device created successfully", Toast.LENGTH_SHORT).show();
+            Intent localIntent = new Intent(Constants.SERVICE_RUNNING_DEVICE).putExtra(Constants.SERVICE_RESULT_DEVICE, "Entity Device created successfully...!");
+            LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(localIntent);
+            sqLiteController.updateStatusActiveByKeywordTempCreate(device.getId());
+            Log.i("CONTEXT 201: ", "Entity Device created successfully...!");
+            Log.i("ID device: ", device.getId());
+        }else if(response.getHttpCode() == 422){
+            //Toast.makeText(this, "The Device already exists....!", Toast.LENGTH_SHORT).show();
+            Intent localIntent = new Intent(Constants.SERVICE_RUNNING_DEVICE).putExtra(Constants.SERVICE_RESULT_DEVICE, "The Device already exists....!");
+            LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(localIntent);
+            sqLiteController.updateStatusActiveByKeywordTempCreate(device.getId());
+            Log.i("CONTEXT 422: ", "The Device already exists....!");
+            Log.i("ID device: ", device.getId());
+        }else{
+            //Toast.makeText(this, "Error sending data...!", Toast.LENGTH_SHORT).show();
+            Intent localIntent = new Intent(Constants.SERVICE_RUNNING_DEVICE).putExtra(Constants.SERVICE_RESULT_DEVICE, "Error sending data...!");
+            LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(localIntent);
+            Log.i("ERROR CREATE: ", "Error sending data...!");
+        }
     }
 
     @Override
@@ -694,7 +663,17 @@ public class DeviceService extends Service implements DeviceController.DeviceRes
 
     @Override
     public void onUpdateEntity(Response response) {
-
+        if(response.getHttpCode()==204 || response.getHttpCode()==200){
+            //Toast.makeText(this, "Successful Device Update...!", Toast.LENGTH_SHORT).show();
+            Intent localIntent = new Intent(Constants.SERVICE_RUNNING_DEVICE).putExtra(Constants.SERVICE_RESULT_DEVICE, "Successful Device Update...!");
+            LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(localIntent);
+            Log.i("UPDATE: ", "Successful Device Update...!");
+        } else{
+            //Toast.makeText(this, "Error updating...!"+response.getHttpCode(), Toast.LENGTH_SHORT).show();
+            Intent localIntent = new Intent(Constants.SERVICE_RUNNING_DEVICE).putExtra(Constants.SERVICE_RESULT_DEVICE, "Error updating...!");
+            LocalBroadcastManager.getInstance(DeviceService.this).sendBroadcast(localIntent);
+            Log.i("ERROR UPDATE: ", "Error updating...!");
+        }
     }
 
     @Override

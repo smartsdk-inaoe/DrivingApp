@@ -85,7 +85,7 @@ public class SendDataService {
                     sendDataMethods.sendLocationSpeed(latitude, longitude, speedMS, speedKmHr);
                     //Detecta Zona
                     detectZone();
-                    Log.i("STATUS 1", "VIEW Latitude: "+latitude+" Longitude: "+longitude+" Velocidad: "+speedMS+"m/s  Velocidad: "+speedKmHr+"km/hr");
+                    //Log.i("STATUS 1", "VIEW Latitude: "+latitude+" Longitude: "+longitude+" Velocidad: "+speedMS+"m/s  Velocidad: "+speedKmHr+"km/hr");
                     break;
                 case Constants.SERVICE_RUNNING_SENSORS:
                     if ((DeviceSensor) intent.getExtras().get(Constants.ACCELEROMETER_RESULT_SENSORS) != null) {
