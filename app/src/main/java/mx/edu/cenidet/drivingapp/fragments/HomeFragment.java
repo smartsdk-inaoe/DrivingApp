@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
     private SendDataService sendDataService;
     private TextView tvDetailCampus;
     private ImageView imagenViewDetailCampus;
-    private FloatingActionButton btnFloating;
+    //private FloatingActionButton btnFloating;
     private AlertController alertController;
 
     public HomeFragment() {
@@ -59,8 +59,8 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
         //imagenViewDetailCampus.setImageResource(R.drawable.outside);
         //tvDetailCampus.setText(context.getString(R.string.message_any_campus));
 
-        btnFloating = (FloatingActionButton) rootView.findViewById(R.id.btnFloating);
-        btnFloating.setOnClickListener(this);
+        /*btnFloating = (FloatingActionButton) rootView.findViewById(R.id.btnFloating);
+        btnFloating.setOnClickListener(this);*/
 
         return rootView;
     }
@@ -73,7 +73,8 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
 
     @Override
     public void sendLocationSpeed(double latitude, double longitude, double speedMS, double speedKmHr) {
-
+        this.latitude = latitude;
+        this.longitude = longitude;
        // Log.i("STATUS: ","HomeFragment-sendLocationSpeed");
     }
 
@@ -107,7 +108,7 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        /*switch (v.getId()){
             case R.id.btnFloating:
                 Date currentDate = new Date();
                 Long date = currentDate.getTime() / 1000;
@@ -119,12 +120,13 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
                 alert.getCategory().setValue("traffic");
                 alert.getDateObserved().setValue(Functions.getActualDate());
                 alert.getDescription().setValue("Se detecto un exceso de velocidad");
-                alert.getLocation().setValue("18.8797396, -99.2217132");
+                alert.getLocation().setValue(latitude+", "+longitude);
                 alert.getSeverity().setValue("critical");
                 //alert.getSeverity().setValue("medium");
                 alert.getSubCategory().setValue("UnauthorizedSpeedDetection");
                 alert.getValidFrom().setValue(Functions.getActualDate());
                 alert.getValidTo().setValue(Functions.getActualDate());
+                Log.i("ALERT GPS", "LATITUDE  "+latitude+" LONGITUDE: "+longitude);
                 try {
                     alertController.createEntity(context, alert.getId(), alert);
                 } catch (Exception e) {
@@ -132,7 +134,7 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
                 }
                 Toast.makeText(context, "Floating: "+date, Toast.LENGTH_SHORT).show();
                 break;
-        }
+        }*/
     }
 
     @Override

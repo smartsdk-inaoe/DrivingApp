@@ -22,6 +22,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.github.clans.fab.FloatingActionButton;
 
 import mx.edu.cenidet.cenidetsdk.utilities.ConstantSdk;
 import mx.edu.cenidet.drivingapp.R;
@@ -32,12 +35,17 @@ import www.fiware.org.ngsi.datamodel.entity.Zone;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
 import www.fiware.org.ngsi.utilities.Tools;
 
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     public static Context MAIN_CONTEXT = null;
     private FrameLayout frameLayout;
     private ApplicationPreferences appPreferences;
+
+    private FloatingActionButton btnFloatingUnknown;
+    private FloatingActionButton btnFloatingAccident;
+    private FloatingActionButton btnFloatingTraffic;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +64,7 @@ public class HomeActivity extends AppCompatActivity{
         setToolbar();
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.navView);
+        createGUI();
         setFragmentDefault();
         //frameLayout = (FrameLayout)findViewById(R.id.headerNavigationDrawer).findViewById(R.id.tvUserName);
 
@@ -174,6 +183,15 @@ public class HomeActivity extends AppCompatActivity{
         homeFragment.setArguments(bundle);
     }
 
+    public void createGUI(){
+        btnFloatingUnknown = (FloatingActionButton)findViewById(R.id.btnFloatingUnknown);
+        btnFloatingUnknown.setOnClickListener(this);
+        btnFloatingAccident = (FloatingActionButton)findViewById(R.id.btnFloatingAccident);
+        btnFloatingAccident.setOnClickListener(this);
+        btnFloatingTraffic = (FloatingActionButton)findViewById(R.id.btnFloatingTraffic);
+        btnFloatingTraffic.setOnClickListener(this);
+    }
+
     private void setToolbar(){
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -256,6 +274,21 @@ public class HomeActivity extends AppCompatActivity{
                         });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnFloatingUnknown:
+                Toast.makeText(getApplicationContext(), "btnFloatingUnknown...!", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.btnFloatingAccident:
+                Toast.makeText(getApplicationContext(), "btnFloatingAccident...!", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.btnFloatingTraffic:
+                Toast.makeText(getApplicationContext(), "btnFloatingTraffic...!", Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 
     //.setCancelable(false)

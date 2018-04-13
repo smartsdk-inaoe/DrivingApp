@@ -10,5 +10,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <include android:id="@+id/btnFloating" layout="@layout/floating_button"/>
+    <!--include android:id="@+id/btnFloating" layout="@layout/floating_button"/-->
 </FrameLayout>

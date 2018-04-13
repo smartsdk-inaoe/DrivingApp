@@ -54,6 +54,10 @@
     <string name="message_address_campus">Address</string>
     <string name="message_any_campus">You are not in any campus..!</string>
 
+    <!--FloatingActionButton-->
+    <string name="message_floating_unknown">Unknown emergency</string>
+    <string name="message_floating_accident">Car Accident</string>
+    <string name="message_floating_traffic">Traffic Jam</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

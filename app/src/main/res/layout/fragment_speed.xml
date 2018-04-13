@@ -50,5 +50,5 @@
         android:layout_gravity="center"
         android:layout_marginTop="40dp"/>
 
-    <include android:id="@+id/btnFloating" layout="@layout/floating_button"/>
+    <!--include android:id="@+id/btnFloating" layout="@layout/floating_button"/-->
 </FrameLayout>
