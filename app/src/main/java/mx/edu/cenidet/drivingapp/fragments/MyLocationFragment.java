@@ -55,7 +55,7 @@ public class MyLocationFragment extends Fragment implements OnMapReadyCallback, 
     public MyLocationFragment() {
         context = HomeActivity.MAIN_CONTEXT;
         sqLiteDrivingApp = new SQLiteDrivingApp(context);
-        sendDataService = new SendDataService(context, this);
+        sendDataService = new SendDataService(this);
         //sendDataService = HomeFragment.SENDDATASERVICE;
         listPolyline = new ArrayList<>();
     }

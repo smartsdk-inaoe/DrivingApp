@@ -29,7 +29,7 @@ import www.fiware.org.ngsi.utilities.Functions;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment implements SendDataService.SendDataMethods, View.OnClickListener, AlertController.AlertResourceMethods{
+public class HomeFragment extends Fragment implements SendDataService.SendDataMethods{
     private View rootView;
     private double latitude, longitude;
     private double speedMS, speedKmHr;
@@ -44,8 +44,7 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
 
     public HomeFragment() {
         context = HomeActivity.MAIN_CONTEXT;
-        sendDataService = new SendDataService(context, this);
-        alertController = new AlertController(this);
+        sendDataService = new SendDataService(this);
     }
 
     @Override
@@ -55,13 +54,6 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
 
         tvDetailCampus = (TextView) rootView.findViewById(R.id.tvDetailCampus);
         imagenViewDetailCampus = (ImageView) rootView.findViewById(R.id.imagenViewDetailCampus);
-
-        //imagenViewDetailCampus.setImageResource(R.drawable.outside);
-        //tvDetailCampus.setText(context.getString(R.string.message_any_campus));
-
-        /*btnFloating = (FloatingActionButton) rootView.findViewById(R.id.btnFloating);
-        btnFloating.setOnClickListener(this);*/
-
         return rootView;
     }
 
@@ -103,52 +95,6 @@ public class HomeFragment extends Fragment implements SendDataService.SendDataMe
 
     @Override
     public void sendEvent(String event) {
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        /*switch (v.getId()){
-            case R.id.btnFloating:
-                Date currentDate = new Date();
-                Long date = currentDate.getTime() / 1000;
-                Alert alert = new Alert();
-                //alert.setId("Alert:Device_Smartphone_"+new DevicePropertiesFunctions().getAndroidId(context)+":"+date);
-                alert.setId(new DevicePropertiesFunctions().getAlertId(context));
-                //alert.getAlertSource().setValue("Device_Smartphone_"+new DevicePropertiesFunctions().getAndroidId(context));
-                alert.getAlertSource().setValue(new DevicePropertiesFunctions().getDeviceId(context));
-                alert.getCategory().setValue("traffic");
-                alert.getDateObserved().setValue(Functions.getActualDate());
-                alert.getDescription().setValue("Se detecto un exceso de velocidad");
-                alert.getLocation().setValue(latitude+", "+longitude);
-                alert.getSeverity().setValue("critical");
-                //alert.getSeverity().setValue("medium");
-                alert.getSubCategory().setValue("UnauthorizedSpeedDetection");
-                alert.getValidFrom().setValue(Functions.getActualDate());
-                alert.getValidTo().setValue(Functions.getActualDate());
-                Log.i("ALERT GPS", "LATITUDE  "+latitude+" LONGITUDE: "+longitude);
-                try {
-                    alertController.createEntity(context, alert.getId(), alert);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(context, "Floating: "+date, Toast.LENGTH_SHORT).show();
-                break;
-        }*/
-    }
-
-    @Override
-    public void onCreateEntityAlert(Response response) {
-        Log.i(STATUS, "CODE Alert: "+response.getHttpCode());
-    }
-
-    @Override
-    public void onUpdateEntityAlert(Response response) {
-
-    }
-
-    @Override
-    public void onGetEntitiesAlert(Response response) {
 
     }
 }

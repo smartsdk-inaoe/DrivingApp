@@ -57,7 +57,7 @@ public class ZoneFragment extends Fragment implements OnMapReadyCallback, SendDa
 
     public ZoneFragment() {
         context = HomeActivity.MAIN_CONTEXT;
-        sendDataService = new SendDataService(context, this);
+        sendDataService = new SendDataService(this);
         sqLiteDrivingApp = new SQLiteDrivingApp(context);
     }
 

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import mx.edu.cenidet.cenidetsdk.db.SQLiteDrivingApp;
 import mx.edu.cenidet.cenidetsdk.entities.Campus;
 import mx.edu.cenidet.cenidetsdk.utilities.ConstantSdk;
+import mx.edu.cenidet.drivingapp.activities.HomeActivity;
 import mx.edu.cenidet.drivingapp.fragments.HomeFragment;
 import www.fiware.org.ngsi.datamodel.entity.DeviceSensor;
 import www.fiware.org.ngsi.datamodel.entity.Zone;
@@ -33,7 +34,6 @@ import www.fiware.org.ngsi.utilities.Constants;
 
 public class SendDataService {
     private SendDataMethods sendDataMethods;
-    private Context context;
     private double latitude, longitude;
     private double speedMS, speedKmHr;
     private IntentFilter filter;
@@ -46,9 +46,10 @@ public class SendDataService {
     private Zone zone = null, auxZone = null;
     private boolean auxStatusLocation = false;
     private ApplicationPreferences applicationPreferences;
+    private Context context;
 
-    public SendDataService(Context context, SendDataService.SendDataMethods sendDataMethods){
-        this.context = context;
+    public SendDataService(SendDataService.SendDataMethods sendDataMethods){
+        context = context = HomeActivity.MAIN_CONTEXT;
         this.sendDataMethods = sendDataMethods;
         filter = new IntentFilter(Constants.SERVICE_CHANGE_LOCATION_DEVICE);
         filter.addAction(Constants.SERVICE_RUNNING_SENSORS);

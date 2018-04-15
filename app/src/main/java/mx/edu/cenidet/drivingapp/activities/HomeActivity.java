@@ -31,16 +31,25 @@ import mx.edu.cenidet.drivingapp.R;
 import mx.edu.cenidet.drivingapp.adapters.PagerAdapter;
 import mx.edu.cenidet.drivingapp.fragments.HomeFragment;
 import mx.edu.cenidet.drivingapp.services.DeviceService;
+import mx.edu.cenidet.drivingapp.services.SendDataService;
+import www.fiware.org.ngsi.controller.AlertController;
+import www.fiware.org.ngsi.datamodel.entity.Alert;
 import www.fiware.org.ngsi.datamodel.entity.Zone;
+import www.fiware.org.ngsi.httpmethodstransaction.Response;
 import www.fiware.org.ngsi.utilities.ApplicationPreferences;
+import www.fiware.org.ngsi.utilities.DevicePropertiesFunctions;
+import www.fiware.org.ngsi.utilities.Functions;
 import www.fiware.org.ngsi.utilities.Tools;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener, SendDataService.SendDataMethods, AlertController.AlertResourceMethods{
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     public static Context MAIN_CONTEXT = null;
     private FrameLayout frameLayout;
     private ApplicationPreferences appPreferences;
+    private double latitude, longitude;
+    private AlertController alertController;
+    private SendDataService sendDataService;
 
     private FloatingActionButton btnFloatingUnknown;
     private FloatingActionButton btnFloatingAccident;
@@ -52,7 +61,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_home);
         MAIN_CONTEXT = HomeActivity.this;
         appPreferences = new ApplicationPreferences();
-
+        sendDataService = new SendDataService(this);
+        alertController = new AlertController(this);
         //Inicializa los datos de conexión
         try {
             Tools.initialize("config.properties", getApplicationContext());
@@ -64,7 +74,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setToolbar();
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.navView);
-        createGUI();
+        btnFloatingGUI();
         setFragmentDefault();
         //frameLayout = (FrameLayout)findViewById(R.id.headerNavigationDrawer).findViewById(R.id.tvUserName);
 
@@ -171,19 +181,40 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         tvUserName.setText(appPreferences.getPreferenceString(getApplicationContext(), ConstantSdk.PREFERENCE_NAME_GENERAL, ConstantSdk.PREFERENCE_KEY_USER_NAME));
         navigationView.addHeaderView(view);
 
-        isDrivingUser();
+        //Para preguntar si el usuario se encuentra manejando
+        //isDrivingUser();
+
         //Inicia el servicio para la captura de la posición.
         Intent deviceService = new Intent(MAIN_CONTEXT, DeviceService.class);
         startService(deviceService);
 
-        //Enviar Datos a los Fragment
+       /* //Enviar Datos a los Fragment
         Bundle bundle = new Bundle();
         HomeFragment homeFragment = new HomeFragment();
         bundle.putString("latitude1", "12345");
-        homeFragment.setArguments(bundle);
+        homeFragment.setArguments(bundle);*/
+        Log.i("onCreate", "-----------------------------------------------------------------------------");
     }
 
-    public void createGUI(){
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("onStart", "-----------------------------------------------------------------------------");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("onResume", "-----------------------------------------------------------------------------");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i("onPause", "-----------------------------------------------------------------------------");
+    }
+
+
+    public void btnFloatingGUI(){
         btnFloatingUnknown = (FloatingActionButton)findViewById(R.id.btnFloatingUnknown);
         btnFloatingUnknown.setOnClickListener(this);
         btnFloatingAccident = (FloatingActionButton)findViewById(R.id.btnFloatingAccident);
@@ -280,15 +311,80 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnFloatingUnknown:
-                Toast.makeText(getApplicationContext(), "btnFloatingUnknown...!", Toast.LENGTH_LONG).show();
+               // startActivity(new Intent(HomeActivity.this, SendManualAlertsActivity.class));
+                //Toast.makeText(getApplicationContext(), "btnFloatingUnknown...!", Toast.LENGTH_LONG).show();
+                if(latitude != 0 && longitude != 0) {
+                    Alert alert = new Alert();
+                    alert.setId(new DevicePropertiesFunctions().getAlertId(MAIN_CONTEXT));
+                    alert.getAlertSource().setValue(new DevicePropertiesFunctions().getDeviceId(MAIN_CONTEXT));
+                    alert.getCategory().setValue("UnknownAlert");
+                    alert.getDateObserved().setValue(Functions.getActualDate());
+                    alert.getDescription().setValue("Unknown alert");
+                    alert.getLocation().setValue(latitude + ", " + longitude);
+                    alert.getSeverity().setValue("undefined");
+                    alert.getSubCategory().setValue("Unknown");
+                    alert.getValidFrom().setValue(Functions.getActualDate());
+                    alert.getValidTo().setValue(Functions.getActualDate());
+                    try {
+                        alertController.createEntity(MAIN_CONTEXT, alert.getId(), alert);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 break;
             case R.id.btnFloatingAccident:
-                Toast.makeText(getApplicationContext(), "btnFloatingAccident...!", Toast.LENGTH_LONG).show();
+                Intent intentAccident = new Intent(HomeActivity.this, SendManualAlertsActivity.class);
+                intentAccident.putExtra("typeAlert", 1);
+                startActivity(intentAccident);
+                //Toast.makeText(getApplicationContext(), "btnFloatingAccident...!", Toast.LENGTH_LONG).show();
                 break;
             case R.id.btnFloatingTraffic:
-                Toast.makeText(getApplicationContext(), "btnFloatingTraffic...!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "btnFloatingTraffic...!", Toast.LENGTH_LONG).show();
+                Intent intentTraffic = new Intent(HomeActivity.this, SendManualAlertsActivity.class);
+                intentTraffic.putExtra("typeAlert", 2);
+                startActivity(intentTraffic);
                 break;
         }
+    }
+
+    @Override
+    public void sendLocationSpeed(double latitude, double longitude, double speedMS, double speedKmHr) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    @Override
+    public void detectZone(Zone zone, boolean statusLocation) {
+
+    }
+
+    @Override
+    public void sendDataAccelerometer(double ax, double ay, double az) {
+
+    }
+
+    @Override
+    public void sendEvent(String event) {
+
+    }
+
+    @Override
+    public void onCreateEntityAlert(Response response) {
+        if(response.getHttpCode() == 201 || response.getHttpCode() == 200){
+            Toast.makeText(MAIN_CONTEXT, R.string.message_successful_sending, Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(MAIN_CONTEXT, R.string.message_failed_send, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onUpdateEntityAlert(Response response) {
+
+    }
+
+    @Override
+    public void onGetEntitiesAlert(Response response) {
+
     }
 
     //.setCancelable(false)

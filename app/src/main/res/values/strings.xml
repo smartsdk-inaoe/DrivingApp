@@ -31,6 +31,8 @@
     <string name="message_login_not_found">Failed to login.</string>
     <string name="message_undetected_zone">You are not in any zone...!</string>
     <string name="message_no_alerts_show">This area has no alerts to show...!</string>
+    <string name="message_successful_sending">Successful sending...!</string>
+    <string name="message_failed_send">Failed to send...!</string>
 
     <!--Dialog alerts-->
     <string name="message_alert_gps">GPS is disabled on the device. Do you want to enable?</string>
@@ -58,6 +60,32 @@
     <string name="message_floating_unknown">Unknown emergency</string>
     <string name="message_floating_accident">Car Accident</string>
     <string name="message_floating_traffic">Traffic Jam</string>
+
+    <!--messages Alerts-->
+    <string name="message_alert_category_accident">accident</string>
+    <string name="message_alert_category_traffic">traffic</string>
+
+    <!--Variables del slide-->
+    <string name="message_title_accident_slide">Car Accident</string>
+    <string name="message_title_traffic_slide">Traffic Jam</string>
+
+    <string name="message_severity_slide">Severity</string>
+    <string name="message_severity_informational_slide">Informational</string>
+    <string name="message_severity_low_slide">Low</string>
+    <string name="message_severity_medium_slide">Medium</string>
+    <string name="message_severity_high_slide">High</string>
+    <string name="message_severity_critical_slide">Critical</string>
+
+    <string name="message_edit_text_slide">Description</string>
+    <string name="message_button_send_slide">Send Alert</string>
+
+
+
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

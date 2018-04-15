@@ -27,4 +27,29 @@
         <item name="fab_colorPressed">#DBA901</item>
         <item name="fab_colorRipple">#B18904</item>
     </style>
+    <style name="MenuButtonsInformational">
+        <item name="fab_colorNormal">#3498db</item>
+        <item name="fab_colorPressed">#00BFFF</item>
+        <item name="fab_colorRipple">#0489B1</item>
+    </style>
+    <style name="MenuButtonsLow">
+        <item name="fab_colorNormal">#2c3e50</item>
+        <item name="fab_colorPressed">#424242</item>
+        <item name="fab_colorRipple">#585858</item>
+    </style>
+    <style name="MenuButtonsMedium">
+        <item name="fab_colorNormal">#f1c40f</item>
+        <item name="fab_colorPressed">#DBA901</item>
+        <item name="fab_colorRipple">#B18904</item>
+    </style>
+    <style name="MenuButtonsHigh">
+        <item name="fab_colorNormal">#e67e22</item>
+        <item name="fab_colorPressed">#B45F04</item>
+        <item name="fab_colorRipple">#8A4B08</item>
+    </style>
+    <style name="MenuButtonsCritical">
+        <item name="fab_colorNormal">#c0392b</item>
+        <item name="fab_colorPressed">#e74c3c</item>
+        <item name="fab_colorRipple">#8A4B08</item>
+    </style>
 </resources>

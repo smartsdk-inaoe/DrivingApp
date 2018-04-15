@@ -86,10 +86,21 @@ public class SplashActivity extends AppCompatActivity implements DeviceTokenCont
             Log.i("Status ", "Inactivo gps");
         }
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("onResume splash", "-----------------------------------------------------------------------------");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i("onPause splash", "-----------------------------------------------------------------------------");
+    }
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
+        Log.i("onPostResume splash", "-----------------------------------------------------------------------------");
     }
 
     private boolean isEnableGPS(){

@@ -45,16 +45,6 @@
 
 
     </LinearLayout>
-
-    <android.support.design.widget.NavigationView
-        android:id="@+id/navView"
-        android:background="#E6E6E6"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/nav_options"
-        />
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/menuFloating"
         android:layout_width="match_parent"
@@ -96,4 +86,15 @@
             fab:fab_label="@string/message_floating_traffic"
             style="@style/MenuButtonsTraffic"/>
     </com.github.clans.fab.FloatingActionMenu>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navView"
+        android:background="#E6E6E6"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/nav_options"
+        />
+
 </android.support.v4.widget.DrawerLayout>
