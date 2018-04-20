@@ -11,6 +11,9 @@
     <string name="cancel">Cancelar</string>
     <string name="confirm_password">Confirmar contraseña</string>
     <string name="remember_user">Recordar usuario</string>
+    <string name="message_btn_create_account">Crear cuenta</string>
+    <string name="message_title_create_account">Crea una cuenta</string>
+    <string name="message_btn_sign_up">Regístrate</string>
 
 
     <!--Drawer and Tabs-->
@@ -35,6 +38,10 @@
     <string name="message_no_alerts_show">Esta zona no tiene alertas para mostrar...!</string>
     <string name="message_successful_sending">Envío exitoso...!</string>
     <string name="message_failed_send">Error al enviar...!</string>
+    <string name="message_empty_fields">Empty fields</string>
+    <string name="message_passwords_incorrect">Las contraseñas son incorrectas, inténtalo de nuevo.</string>
+    <string name="message_account_generated">Cuenta generada exitosamente.</string>
+    <string name="message_user_exists">El usuario ya existe con este número de teléfono.</string>
 
     <!--Dialog alerts-->
     <string name="message_alert_gps">El GPS está desactivado en el dispositivo. ¿Quieres habilitarlo?</string>
@@ -70,7 +77,7 @@
     <!--Variables del slide-->
     <string name="message_title_accident_slide">Accidente Automovilistico</string>
     <string name="message_title_traffic_slide">Embotellamiento</string>
-
+    <string name="message_title_level_severity">Seleccione el nivel de severidad</string>
     <string name="message_severity_slide">Severidad</string>
     <string name="message_severity_informational_slide">Informacional</string>
     <string name="message_severity_low_slide">Bajo</string>

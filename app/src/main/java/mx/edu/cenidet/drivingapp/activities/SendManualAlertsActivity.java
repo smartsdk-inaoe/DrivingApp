@@ -40,7 +40,7 @@ import www.fiware.org.ngsi.utilities.Functions;
 public class SendManualAlertsActivity extends AppCompatActivity implements SendDataService.SendDataMethods, View.OnClickListener, AlertController.AlertResourceMethods  {
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
-    private LinearLayout dotsLayout;
+    //private LinearLayout dotsLayout;
     private TextView[] dots;
     private int[] layouts;
     private PrefManager prefManager;
@@ -50,7 +50,7 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
     private double latitude, longitude;
     private SendDataService sendDataService;
     private AlertController alertController;
-    private ImageButton btnReturn;
+    //ImageButton btnReturn;
     // Elementos GUI
     private ImageView imageViewSendAlert;
     private TextView tvTitle;
@@ -85,7 +85,7 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
         }
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
-        dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
+        //dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
         // layouts of all welcome sliders
         // add few more layouts if you want
         layouts = new int[]{
@@ -96,7 +96,7 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
                 R.layout.welcome_slide5};
 
         // adding bottom dots
-        addBottomDots(0);
+        //addBottomDots(0);
 
         // making notification bar transparent
         changeStatusBarColor();
@@ -110,7 +110,7 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
         myViewPagerAdapter = new MyViewPagerAdapter(context, layouts);
         viewPager.setAdapter(myViewPagerAdapter);
 
-        viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
+       // viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
     }
 
     private void elementsGUI(){
@@ -118,12 +118,11 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvSeverity = (TextView) findViewById(R.id.tvSeverity);
         etDescriptionAlert = (EditText) findViewById(R.id.etDescriptionAlert);
-        etDescriptionAlert.setHint(R.string.message_edit_text_slide);
+
         btnSendAlert = (Button) findViewById(R.id.btnSendAlert);
-        btnSendAlert.setText(R.string.message_button_send_slide);
         btnSendAlert.setOnClickListener(this);
-        btnReturn = (ImageButton) findViewById(R.id.btnReturn);
-        btnReturn.setOnClickListener(this);
+        //btnReturn = (ImageButton) findViewById(R.id.btnReturn);
+        //btnReturn.setOnClickListener(this);
         btnFloatingInformational = (FloatingActionButton) findViewById(R.id.btnFloatingInformational);
         btnFloatingInformational.setOnClickListener(this);
         btnFloatingLow = (FloatingActionButton) findViewById(R.id.btnFloatingLow);
@@ -134,8 +133,6 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
         btnFloatingHigh.setOnClickListener(this);
         btnFloatingCritical = (FloatingActionButton) findViewById(R.id.btnFloatingCritical);
         btnFloatingCritical.setOnClickListener(this);
-
-
     }
 
     /**
@@ -182,27 +179,22 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
         switch (position){
             case 0:
                 severity = "informational";
-                //severity = this.getString(R.string.message_severity_informational_slide);
                 structureAlert(typeAlert, severity);
                 break;
             case 1:
                 severity = "low";
-                //severity = this.getString(R.string.message_severity_low_slide);
                 structureAlert(typeAlert, severity);
                 break;
             case 2:
                 severity = "medium";
-                //severity = this.getString(R.string.message_severity_medium_slide);
                 structureAlert(typeAlert, severity);
                 break;
             case 3:
                 severity = "high";
-                //severity = this.getString(R.string.message_severity_high_slide);
                 structureAlert(typeAlert, severity);
                 break;
             case 4:
                 severity = "critical";
-                //severity = this.getString(R.string.message_severity_critical_slide);
                 structureAlert(typeAlert, severity);
                 break;
         }
@@ -213,12 +205,13 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
         if (typeAlert == 1){
             alert.setId(new DevicePropertiesFunctions().getAlertId(context));
             alert.getAlertSource().setValue(new DevicePropertiesFunctions().getDeviceId(context));
-            alert.getCategory().setValue(this.getString(R.string.message_alert_category_accident));
+            //alert.getCategory().setValue(this.getString(R.string.message_alert_category_accident));
+            alert.getCategory().setValue("traffic");
             alert.getDateObserved().setValue(Functions.getActualDate());
             alert.getDescription().setValue(etDescriptionAlert.getText().toString());
             alert.getLocation().setValue(latitude+", "+longitude);
             alert.getSeverity().setValue(severity);
-            alert.getSubCategory().setValue("AccidentDetection");
+            alert.getSubCategory().setValue("carAccident");
             alert.getValidFrom().setValue(Functions.getActualDate());
             alert.getValidTo().setValue(Functions.getActualDate());
             try {
@@ -230,12 +223,13 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
         }else{
             alert.setId(new DevicePropertiesFunctions().getAlertId(context));
             alert.getAlertSource().setValue(new DevicePropertiesFunctions().getDeviceId(context));
-            alert.getCategory().setValue(this.getString(R.string.message_alert_category_traffic));
+            //alert.getCategory().setValue(this.getString(R.string.message_alert_category_traffic));
+            alert.getCategory().setValue("traffic");
             alert.getDateObserved().setValue(Functions.getActualDate());
             alert.getDescription().setValue(etDescriptionAlert.getText().toString());
             alert.getLocation().setValue(latitude+", "+longitude);
             alert.getSeverity().setValue(severity);
-            alert.getSubCategory().setValue("TrafficDetection");
+            alert.getSubCategory().setValue("trafficJam");
             alert.getValidFrom().setValue(Functions.getActualDate());
             alert.getValidTo().setValue(Functions.getActualDate());
             try {
@@ -254,7 +248,7 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void addBottomDots(int currentPage) {
+    /*private void addBottomDots(int currentPage) {
         dots = new TextView[layouts.length];
 
         int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
@@ -271,7 +265,7 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
 
         if (dots.length > 0)
             dots[currentPage].setTextColor(colorsActive[currentPage]);
-    }
+    }*/
 
     private int getItem(int i) {
         return viewPager.getCurrentItem() + i;
@@ -284,7 +278,7 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
         @Override
         public void onPageSelected(int position) {
             //auxPosition = position;
-            addBottomDots(position);
+            //addBottomDots(position);
             viewPositionSlide(position);
         }
 
@@ -318,34 +312,44 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
                 sendAlert(auxPosition, typeAlert);
                 //Toast.makeText(getApplicationContext(), "Position: "+auxPosition, Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.btnReturn:
+            /*case R.id.btnReturn:
                 startActivity(new Intent(SendManualAlertsActivity.this, HomeActivity.class));
                 this.finish();
-                break;
+                break;*/
             case R.id.btnFloatingInformational:
                 position = 0;
-                addBottomDots(position);
+                //addBottomDots(position);
                 viewPositionSlide(position);
+                myViewPagerAdapter = new MyViewPagerAdapter(context, layouts, position);
+                viewPager.setAdapter(myViewPagerAdapter);
                 break;
             case R.id.btnFloatingLow:
                 position = 1;
-                addBottomDots(position);
+                //addBottomDots(position);
                 viewPositionSlide(position);
+                myViewPagerAdapter = new MyViewPagerAdapter(context, layouts, position);
+                viewPager.setAdapter(myViewPagerAdapter);
                 break;
             case R.id.btnFloatingMedium:
                 position = 2;
                 viewPositionSlide(position);
-                addBottomDots(position);
+                //addBottomDots(position);
+                myViewPagerAdapter = new MyViewPagerAdapter(context, layouts, position);
+                viewPager.setAdapter(myViewPagerAdapter);
                 break;
             case R.id.btnFloatingHigh:
                 position = 3;
                 viewPositionSlide(position);
-                addBottomDots(position);
+                //addBottomDots(position);
+                myViewPagerAdapter = new MyViewPagerAdapter(context, layouts, position);
+                viewPager.setAdapter(myViewPagerAdapter);
                 break;
             case R.id.btnFloatingCritical:
                 position = 4;
                 viewPositionSlide(position);
-                addBottomDots(position);
+                //addBottomDots(position);
+                myViewPagerAdapter = new MyViewPagerAdapter(context, layouts, position);
+                viewPager.setAdapter(myViewPagerAdapter);
                 break;
         }
     }
@@ -374,6 +378,7 @@ public class SendManualAlertsActivity extends AppCompatActivity implements SendD
 
     @Override
     public void onCreateEntityAlert(Response response) {
+        Log.i("SEND", "---------------------------------------"+response.getHttpCode());
         if(response.getHttpCode() == 201 || response.getHttpCode() == 200){
             Toast.makeText(context, R.string.message_successful_sending, Toast.LENGTH_SHORT).show();
         }else{
